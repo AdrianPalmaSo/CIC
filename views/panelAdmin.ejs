@@ -7,6 +7,8 @@
     <!-- Estilos CSS -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="resources/css/style_menu_administrador.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.0.2/css/dataTables.bootstrap5.css">
 </head>
 <body>
 <div class="logo-contenedor">
@@ -17,23 +19,30 @@
 
 <!-- Sección de sesión -->
 <% if (typeof login !== 'undefined' && login) { %>
-<div class="mostrarSesion">
-    <p class="sesion" id="sesion">Usuario: <%= name %></p>
-    <div id="logoutMenu">
-        <a href="logout">Logout</a>
+<div class="d-flex flex-row-reverse bd-highlight">
+    <div class="btn-group  p-2 bd-highlight justify-content-end">
+        <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Usuario: <%= name %>
+        </button>
+        <div class="dropdown-menu">
+            <a class="dropdown-item" href="logout">Logout</a>
+        </div>
     </div>
 </div>
 <% } %>
 
 <!-- Menú de opciones -->
 <nav class="menu">
-    <div class="opcion-menu" onclick="mostrarContenido('solicitud-de-reportes')">Solicitud de Reportes</div>
-    <div class="opcion-menu" onclick="mostrarContenido('Vales')">Vales</div>
-    <div class="opcion-menu" onclick="mostrarContenido('Dictamen')">Dictamen</div>
-    <div class="opcion-menu" onclick="mostrarContenido('Historial')">Historial Solicitudes</div>
-    <div class="opcion-menu" onclick="mostrarContenido('Historial2')">Historial Vales</div>
-    <div class="opcion-menu" onclick="mostrarContenido('Estatus')">Estatus</div>
-    <div class="opcion-menu" onclick="mostrarContenido('Registro')">Registro</div>
+    <div class="opcion-menu" data-id="solicitud-de-reportes" onclick="mostrarContenido(this)">Solicitud de Reportes</div>
+    <div class="opcion-menu" data-id="Vales" onclick="mostrarContenido(this)">Vales</div>
+    <div class="opcion-menu" data-id="Dictamen" onclick="mostrarContenido(this)">Dictamen</div>
+    <div class="opcion-menu" data-id="Historial" onclick="mostrarContenido(this)">Historial Solicitudes</div>
+    <div class="opcion-menu" data-id="Historial2" onclick="mostrarContenido(this)">Historial Vales</div>
+    <div class="opcion-menu" data-id="Estatus" onclick="mostrarContenido(this)">Estatus</div>
+    <div class="opcion-menu" data-id="Registro" onclick="mostrarContenido(this)">Registro</div>
+    <div class="opcion-menu" data-id="RegistroT" onclick="mostrarContenido(this)">Tecnicos</div>
+    <div class="opcion-menu" data-id="Estadisticas" onclick="mostrarContenido(this)">Estadisticas</div>
+
 </nav>
 
 
@@ -292,8 +301,16 @@
                             </select>
                     </div>
                     <div>
-                        <label for="revision" class="col-sm-2 col-form-label" id="lblRevision">Revisó:</label>
-                        <input type="text" class="form-control datosEquipo" name="revision" id="revision" required>
+                        <label for="tecnico" class="col-sm-2 col-form-label labelFolio" id="lblAsignado">Asignar a técnico:</label>
+                        <select name="tecnico" id="tecnico" class="form-select form-select-sm">
+                            <% tecnicos.forEach(tecnico => { %>
+                            <option value="<%= tecnico.IdTecnico + '|' + tecnico.Correo%>"><%= tecnico.IdTecnico %>-<%= tecnico.Nombre %></option>
+                            <% }); %>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="revision" class="col-sm-2 col-form-label labelFolio" id="lblRevision">Revisó:</label>
+                        <input type="text" class="form-control datosEquipo input-sm" name="revision" id="revision" required>
                     </div>
                 </div>
                 <div class="enviarVale">
@@ -323,6 +340,7 @@
     </body>
     </div>
     <!-- Agrega aquí más secciones de contenido según sea necesario -->
+
 <!-- DICTAMENES------------------------------------------------------------------------------------------------ -->
 <div id="Dictamen" class="contenido-individual">
     <!-- Contenido de historial -->
@@ -372,8 +390,8 @@
                     <input type="text" name="noSerieEquipo" id="noSerieEquipo" class="form-control form-control-sm" required> 
                 </div>
                 <div>
-                    <label for="estadoDictamen" class="labelMayor">Estado:</label>
-                    <select name="estadoDictamen" id="estadoDictamen" class="form-select form-select-sm" required>
+                    <label for="estado" class="labelMayor">Estado:</label>
+                    <select name="estado" id="estado" class="form-select form-select-sm" required>
                         <option value="blanco">&nbsp;</option>
                         <option value="vigente">Vigente</option>
                         <option value="obsoleto">Obsoleto</option>
@@ -385,7 +403,7 @@
                         <option value="blanco">&nbsp;</option>
                         <option value="Funciona">Funcional</option>
                         <option value="No Funciona">Obsoleto</option>
-                        <option value="'Baja">Tramitar Baja</option>
+                        <option value="Baja">Tramitar Baja</option>
                     </select>
                 </div>   
             
@@ -431,7 +449,8 @@
 </body>
 </div>
     <!-- Agrega aquí más secciones de contenido según sea necesario -->
-<!-- SOLICITUD DE HISTORIAL DE SOLICITUDES -->
+
+<!-- SOLICITUD DE HISTORIAL DE SOLICITUDES -------------------------------------------------------------------------------------->
 <div id="Historial" class="contenido-individual">
     <head>
         <!-- Metadatos -->
@@ -447,35 +466,11 @@
     <!-- Contenedor principal para el historial de solicitudes -->
         <div class="historialSolicitudes">
             <!-- Título de la sección -->
-            <h2 id="tituloHistorialSoli">Historial de solicitudes</h2>
-            <!-- Formulario para filtrar el historial -->
-            <form action="#" method="post">
-                <!-- Contenedor para los campos de filtro -->
-                <div class="contenedorFiltro">
-                    <!-- Campo de búsqueda -->
-                    <div>
-                        <input type="text" name="buscar" id="buscar" placeholder="&#x1F50D;Buscar">
-                    </div>
-                    <!-- Campo de selección de estado -->
-                    <div>
-                        <select name="estado" id="estado">
-                            <option value="blanco">Filtro</option>
-                            <option value="folio">Folio</option>
-                            <option value="fecha">Fecha</option>
-                            <option value="usuario">Usuario</option>
-                            <option value="estado">Estado</option>
-                        </select>
-                    </div>
-                    <!-- Botón para aplicar el filtro -->
-                    <div class="btnFiltrar">
-                        <button  type="submit" id="btnFiltrar">Filtrar</button>
-                    </div>
-                </div>
-                
+            <h2 id="tituloHistorialSoli">Historial de Solicitudes</h2>
                 <!-- Contenedor para la tabla del historial -->
                 <div class="table-responsive">
-                    <table  class="table table-hover table-striped">
-                        <tr class="table-dark">
+                    <table  class="table table-hover table-striped" id="TablaHistorialSolicitudes">
+                        <thead>
                             <th>Folio</th>
                             <th>Fecha</th>
                             <th>Hora</th>
@@ -484,7 +479,7 @@
                             <th>Estado</th>
                             <th>Vale</th>
                             <th>Dictamen</th>
-                        </tr>
+                        </thead>
                         <% historial.forEach(solicitud => { %>
                             <!-- Fila de la tabla para cada solicitud en el historial -->
                             <tr>
@@ -500,9 +495,10 @@
                         <% }); %>
                     </table>
                 </div>
-            </form>
         </div>
         <script src="resources/scripts/semaforo.js"></script>
+            <script src="resources/scripts/paneles.js"></script>
+
     </body>
 </div>
 
@@ -547,6 +543,7 @@
                             <select name="rol" id="rol" class="form-select form-select-sm" required>
                                 <option value="Admin">Administrador</option>
                                 <option value="Usuario">Usuario</option>
+                                <option value="Tecnico">Técnico</option>
                             </select>
                         </div>
                     </div>
@@ -583,6 +580,71 @@
         <% } %>       
         </body>
     </div>
+<!-----------------------------------TECNICOS-->
+<div id="RegistroT" class="contenido-individual">
+    <!-- Contenido de Registro -->
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Registro usuarios</title>
+        <link rel="stylesheet" href="resources/css/style_registro.css">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500&family=Roboto:wght@400;700&display=swap" rel="stylesheet">      
+    </head>
+    <body>
+<div class="contenedor" id="contenedorTecnicos">
+    <h3 class="titulosLogin">Registrar Tecnico</h3>
+    <form action="registerT" method="post" id="formRegistro">
+        <div class="registroCampos">
+            <label for="nombreT" class="lblRegistro">Nombres:</label>
+            <input type="text" class="form-control" name="nombreT" placeholder="Nombre(s)" required>
+        </div>
+        <div class="registroCampos">
+            <label for="apellidos" class="lblRegistro">Apellidos</label>
+            <input type="text" class="form-control" name="apellidos" placeholder="Apellido paterno y materno" required>
+        </div>
+        <div class="registroCampos">
+            <label for="noTrabajador" class="lblRegistro">Numero de trabajador</label>
+            <input type="text" class="form-control" name="noTrabajador" placeholder="Numero de trabajador" required>
+        </div>
+        <div class="registroCampos">
+            <label for="email" class="lblRegistro">Correo institucional</label>
+            <input type="text" class="form-control" name="email" placeholder="correo@uacam.mx" required>
+        </div>
+        <div class="registroCampos">
+            <label for="telef" class="lblRegistro">Telefono</label>
+            <input type="text" class="form-control" name="telef" placeholder="xxx-xxx-xxxx" required>
+        </div>
+        <div class="selects_registro" id="registroTecnico">
+                <label for="idUsuario" class="col-sm-2 col-form-label" id="lblTec">Id de usuario en CIC Assistance:</label>
+                    <select name="IdUsuario" id="tecnicoId" class="form-select form-select-sm" required>
+                        <% usuariosTecnicos.forEach(usuario => { %>
+                            <option value="<%= usuario.IdUsuario %>"><%= usuario.IdUsuario %>-<%= usuario.Nombre %></option>
+                        <% }); %>
+                    </select>
+        </div>
+        <div id="enviarRegistro">
+            <input type="submit" value="Registrar" class="btn btn-outline-dark">
+        </div>
+    </form>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>  <!-- Obtenido de sweetAlert2  -->
+<!--Tenemos que llamar la estructura para usar el mensaje AlertSweet en EJS llamando los parametros establecidos en APPJS-->
+<% if(typeof alert != "undefined"){ %>
+<script>
+    Swal.fire({
+        title: '<%= alertTitle %>',
+        text: '<%= alertMessage %>',
+        icon: '<%= alertIcon %>',
+        showConfirmButton: <%= showConfirmButton %>,
+        timer: <%= timer %>
+    }).then(() =>{
+        window.location ='/<%= ruta %>'    //Hay que especificar la ruta con '/' que indica que nos redirige a la raiz, index
+    })
+</script>
+<% } %>       
+</body>
+</div>
+
 <!-- HISTORIAL 2----------------------------------------------------------------------------------------------- -->
 <div id="Historial2" class="contenido-individual">
     <!-- Contenido de historial -->
@@ -597,14 +659,14 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             // Obtener todas las celdas de la columna IdDictamen
-            var celdasIdDictamen = document.querySelectorAll('.historialTablaContenedor .table td:nth-child(8)');
+            var celdasIdDictamen = document.querySelectorAll('.historialTablaContenedor .table td:nth-child(6)');
             
             // Iterar sobre cada celda
             celdasIdDictamen.forEach(function (celda) {
                 // Verificar el contenido de la celda
                 if (celda.textContent.trim() === 'No existe') {
                     // Obtener las celdas de las columnas "Dicta-PDF"
-                    var celdaDictaPDF = celda.parentElement.querySelector('td:nth-child(10)');
+                    var celdaDictaPDF = celda.parentElement.querySelector('td:nth-child(8)');
                     
                     // Cambiar el contenido por un espacio en blanco en ambas celdas
                     celdaDictaPDF.textContent = ' ';
@@ -618,21 +680,18 @@
         <h2 id="tituloBitacora">Historial Vales</h2>   
         <div class="historialTablaContenedor">
             <div class="table-responsive">
-                <table  class="table table-hover table-striped">
+                <table  class="table table-hover table-striped" id="TablaHistorialVales">
                     <thead>
-                        <tr class="table-dark">
-                            <td>Folio</td>
-                            <td>Vale</td>
-                            <td>Usuario</td>
-                            <td>Equipo</td>
-                            <td>Marca</td>
-                            <td>Modelo</td>
-                            <td>NoSerie</td>
-                            <td>Estado</td>
-                            <td>Dictamen</td>
-                            <td>Vale-PDF</td>
-                            <td>Dicta-PDF</td>
-                        </tr>
+                            <th>Folio</th>
+                            <th>Vale</th>
+                            <th>Usuario</th>
+                            <th>Equipo</th>
+                            <th>Estado</th>
+                            <th>Dictamen</th>
+                            <th>Vale-PDF</th>
+                            <th>Dicta-PDF</th>
+                            <th>Diagnóstico Técnico</th>
+                            <th>Solución Aplicada</th>
                     </thead>
                     
                     <% vales.forEach((variables) => { %>
@@ -641,13 +700,12 @@
                             <td><%= variables.idVale %></td>
                             <td><%= variables.NombreUsuario %></td>
                             <td><%= variables.Equipo %></td>
-                            <td><%= variables.MarcaEquipo %></td>
-                            <td><%= variables.ModeloEquipo %></td>
-                            <td><%= variables.NoSerieEquipo %></td>
                             <td class="estado-td" data-estado="<%= variables.Estado %>"><%= variables.Estado %></td>
                             <td><%= variables.IdDictamen %></td>
                             <td><a href="/descargarPDFvale?folioSolicitud=<%= variables.FolioSolicitud %>"><img src="resources/images/downloads.png" alt="Descargar Vale"></a></td>
                             <td><a href="/descargarPDFdictamen?folioSolicitud=<%= variables.FolioSolicitud %>"><img src="resources/images/downloads.png" alt="Descargar Dictamen"></a></td>
+                            <td><%= variables.Diagnostico %></td>
+                            <td><%= variables.Solucion %></td>
                             
                         </tr>
                     <% }); %>
@@ -670,17 +728,20 @@
         <title>Statistics Example</title>
     </head>
     <body>
-        <div class="container" >
+        <div class="container" style="max-width: 100%;">
             <h2 id="estadoSolicitudes">Estado de solicitudes</h2>
-            
+            <div class="guardarCambios">
+                <button type="button" class="btn btn-outline-dark" id="guardarCambios">Guardar cambios</button>
+            </div>
             <div class="table-responsive">
-                <table  class="table  table-light" id="estatusTabla">
-                    <tr class="table-dark">
+                <table  class="table" id="estatusTabla">
+                    <tr class="tableEstatus">
                         <th colspan="5" class="tablaTitulos">Abierto</th>
-                        <th colspan="4" class="tablaTitulos">Pendiente</th>
+                        <th colspan="4" class="tablaTitulos">Asignadas</th>
+                        <th colspan="4" class="tablaTitulos">En Proceso</th>
+                        <th colspan="4" class="tablaTitulos">En Espera</th>
                         <th colspan="3" class="tablaTitulos">Cerrado</th>
                     </tr>
-                </thead>
                 <tbody>
                     <tr class="table-secondary">
                         <td>Folio</td>
@@ -688,6 +749,14 @@
                         <td>Equipo</td>
                         <td>Fecha</td>
                         <td id="bordeD">Estatus</td>
+                        <td >Folio</td>
+                        <td>Nombre</td>
+                        <td>Tecnico</td>
+                        <td id="bordeDer">Estatus</td>
+                        <td >Folio</td>
+                        <td>Nombre</td>
+                        <td>Equipo</td>
+                        <td id="bordeDer">Estatus</td>
                         <td >Folio</td>
                         <td>Nombre</td>
                         <td>Equipo</td>
@@ -708,7 +777,8 @@
                                     <td class="seleccion bg-success" id="bordeDerecho<%= i %>" >
                                         <select class="form-select cambiarEstado" data-folio="<%= abierto[i].FolioSolicitud %>">
                                             <option value="Abierto" selected>Abierto</option>
-                                            <option value="Pendiente">Pendiente</option>
+                                            <option value="Proceso">En Proceso</option>
+                                            <option value="Espera">En Espera</option>
                                             <option value="Cerrado">Cerrado</option>
                                         </select>
                                     </td>
@@ -719,7 +789,25 @@
                                     <td></td>
                                     <td id="bordeDerechoVacio"></td>
                                 <% } %>
-                
+                                <!----ASIGNADAS-->
+                                <% if (i < asignada.length) { %>
+                                    <td class="bg-primary"><%= asignada[i].FolioSolicitud %></td>
+                                    <td class="bg-primary"><%= asignada[i].UsuarioNombre %></td>
+                                    <td class="bg-primary" id="equipoEstado<%= i %>"><%= asignada[i].Nombre %></td>
+                                    <td class="seleccion bg-primary" id="ladoDerecho<%= i %>" >
+                                        <select class="form-select cambiarEstado" data-folio="<%= asignada[i].FolioSolicitud %>">
+                                            <option value="Asignada" selected>Asignada</option>
+                                            <option value="Proceso">En Proceso</option>
+                                            <option value="Espera">En Espera</option>
+                                            <option value="Cerrado">Cerrado</option>
+                                        </select>
+                                    </td>
+                                <% } else { %>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td id="ladoDerechoVacio"></td>
+                                <% } %>
                                 <!-- Pendiente -->
                                 <% if (i < pendiente.length) { %>
                                     <td class="bg-warning"><%= pendiente[i].FolioSolicitud %></td>
@@ -727,8 +815,9 @@
                                     <td class="bg-warning"><%= pendiente[i].Equipo %></td>
                                     <td class="seleccion bg-warning" id="pendienteDerecha<%= i %>">
                                         <select class="form-select cambiarEstado" data-folio="<%= pendiente[i].FolioSolicitud %>">
-                                            <option value="Pendiente" selected>Pendiente</option>
+                                            <option value="Proceso" selected>En Proceso</option>
                                             <option value="Abierto">Abierto</option>
+                                            <option value="Espera">En Espera</option>
                                             <option value="Cerrado">Cerrado</option>
                                         </select>
                                     </td>
@@ -739,7 +828,26 @@
                                     <td id="pendienteVacioDerecha"></td>
                                   
                                 <% } %>
-                
+                                <!-- En espera -->
+                                <% if (i < espera.length) { %>
+                                    <td class="bg-info"><%= espera[i].FolioSolicitud %></td>
+                                    <td class="bg-info"><%= espera[i].Nombre %></td>
+                                    <td class="bg-info"><%= espera[i].Equipo %></td>
+                                    <td class="seleccion bg-info" id="esperarDerecha<%= i %>">
+                                        <select class="form-select cambiarEstado" data-folio="<%= espera[i].FolioSolicitud %>">
+                                            <option value="Proceso">En Proceso</option>
+                                            <option value="Abierto">Abierto</option>
+                                            <option value="Espera" selected>En Espera</option>
+                                            <option value="Cerrado">Cerrado</option>
+                                        </select>
+                                    </td>
+                                <% } else { %>
+                                    <td ></td>
+                                    <td ></td>
+                                    <td ></td>
+                                    <td id="esperaVacioDerecha"></td>
+                                  
+                                <% } %>
                                 <!-- Cerrado -->
                                 <% if (i < cerrado.length) { %>
                                     <td class="bg-danger"><%= cerrado[i].FolioSolicitud %></td>
@@ -757,15 +865,136 @@
                 </tbody>
             </table>
             </div>
-            <div class="guardarCambios">
-                <button type="button" class="btn btn-outline-dark" id="guardarCambios">Guardar cambios</button>
-            </div>
         </div>
         <script src="resources/scripts/estatus.js"></script>
         </body>
     </div>
     <!-- Agrega aquí más secciones de contenido según sea necesario -->
+<!-- Sección de estadisticas -->
 
+    <div id="Estadisticas" class="contenido-individual">
+        <!-- Contenido de historial -->
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="#">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+        <title>Reportes de uso</title>
+    </head>
+    <body>
+        <div class="container" style="max-width: 100%;">
+            <h2 id="estadoSolicitudes">Reportes de uso</h2>
+            <div class="container-xl px-4 mt-4">
+                <div class="row">
+                    <div class="col">
+                        <div class="card mb-4">
+                            <div class="card-header">Detalles del reporte</div>
+                            <div class="card-body">
+                                <form method="post" action="#">
+                                    <!-- Form Row-->
+                                    <div class="row gx-3 mb-3">
+                                        <div class="col md-6">
+                                            <label class="small mb-1 is-required" for="input_tipo">
+                                                Tipo de solicitudes:
+                                            </label>
+                                            <select class="form-select form-select-mb mb-1" id="input_tipo" autocomplete="off"
+                                                    name="tipo">
+                                                    <option value="solicitudes" selected>Solicitudes</option>
+                                                    <option value="vales">Vales</option>
+                                                    <option value="dictamenes">Dictámenes</option>
+                                            </select>
+                                        </div>
+                                    <div class="row gx-3 mb-3 ">
+                                        <p class="text-justify mt-2 mb-0">Seleccione el periodo de tiempo que desea incluir en el reporte</p>
+
+                                        <div class="col-md-6">
+                                            <label class="small mb-1 is-required" for="input_desde">
+                                                Desde:
+                                            </label>
+                                            <input class="form-control" id="input_desde" type="date" required
+                                                   autocomplete="off" name="desdeFecha"
+                                                   placeholder="Ingrese desde que fecha"/>
+                                        </div>
+        
+                                        <div class="col-md-6 ">
+                                            <label class="small mb-1 is-required" for="input_hasta">
+                                                Hasta:
+                                            </label>
+                                            <div class="input-group">
+                                                <input type="date" class="form-control" name="hastaFecha" required autocomplete="off"
+                                                       placeholder="Ingrese hasta que fecha" id="input_hasta">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row gx-3 mb-3 ">
+                                        <p class="text-justify">Introduzca los datos complementarios del reporte</p>
+                                        <div class="col-md-4">
+                                            <label class="small mb-1 is-required" for="input_titulo">
+                                                Título:
+                                            </label>
+                                            <select class="form-select form-select-mb mb-1" id="input_titulo" autocomplete="off"
+                                                    name="titulo">
+                                                    <option value="Ing.">Ing.</option>
+                                                    <option value="Lic.">Lic.</option>
+                                                    <option value="Dr.">Dr.</option>
+                                            </select>
+                                        </div>
+        
+                                        <div class="col-md-4">
+                                            <label class="small mb-1 is-required" for="input_nombre">
+                                                Nombre:
+                                            </label>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" name="nombre" required autocomplete="off"
+                                                       placeholder="Ingrese su nombre" id="input_nombre">
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <label class="small mb-1 is-required" for="input_oficio">
+                                                Núm. de oficio:
+                                            </label>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" name="oficio" required autocomplete="off"
+                                                       placeholder="P.E. 10/15" id="input_oficio">
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <label class="small mb-1 is-required" for="input_expediente">
+                                                Expediente:
+                                            </label>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" name="expediente" required autocomplete="off"
+                                                       placeholder="P.E. MR-15" id="input_expediente">
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <label class="small mb-1 is-required" for="input_area">
+                                                Área:
+                                            </label>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" name="area" required autocomplete="off"
+                                                       placeholder="P.E. 10/15" id="input_area">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-around">
+                                        <button type="button" id="generarReportesBtn" class="btn text-light" style="background-color: #0D1642;">Generar reporte</button>
+                                        <button type="button" id="generarEstadisticasBtn" class="btn text-light" style="background-color: #0D1642;">Generar estadisticas</button>
+                                    </div>
+                                    </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </body>
+    </div>
+    <script src="resources/scripts/estadisticas.js"></script>
 </main>
 
 <footer class="pie-pagina">
@@ -773,6 +1002,58 @@
 </footer>
 
 <script src="resources/scripts/paneles.js"></script>
+    
+
+<!-- SCRIPTS PARA GENERAR LOS FILTROS FUNCIONALES ------------------------------------------------------------------------->
+<script src="resources/scripts/paneles.js"></script>
+
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.datatables.net/2.0.2/js/dataTables.js"></script>
+<script src="https://cdn.datatables.net/2.0.2/js/dataTables.bootstrap5.js"></script>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<script>
+
+new DataTable('#TablaHistorialSolicitudes', {
+    language: {
+        info: 'Mostrando _PAGE_ de _PAGES_ paginas',
+        infoEmpty: 'No records available',
+        lengthMenu: '_MENU_ Entradas por pagina',
+        zeroRecords: 'No se encontro - Lo siento',
+        search: "Buscar:"
+    }
+    });
+
+    new DataTable('#TablaHistorialVales', {
+    language: {
+        info: 'Mostrando _PAGE_ de _PAGES_ paginas',
+        infoEmpty: 'No records available',
+        lengthMenu: '_MENU_ Entradas por pagina',
+        zeroRecords: 'No se encontro - Lo siento',
+        search: "Buscar:"
+    }
+    });
+
+</script>
+<!--Script para mostrar el div logout-->
+<script>
+    const contenedorMostrarSesion = document.querySelector('.contenedorMostrarSesion');
+    const logoutMenu = document.querySelector('#logoutMenu');
+
+    contenedorMostrarSesion.addEventListener('click', function(event) {
+        logoutMenu.style.display = (logoutMenu.style.display === 'block') ? 'none' : 'block';
+        event.stopPropagation();
+    });
+
+    document.addEventListener('click', function(event) {
+        if (!logoutMenu.contains(event.target) && event.target !== logoutMenu) {
+            logoutMenu.style.display = 'none';
+        }
+    });
+
+</script>
 
 </body>
 </html>

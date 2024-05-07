@@ -23,12 +23,12 @@ body {
 
 table {
     width: 100%;
-
     border: 1px solid #311C6C; /* Cambiado el color */
 }
 #estatusTabla th,td{
     text-align: center;
     width: auto;
+    font-size: .95em;
 }
 #equipoEstado{
     width: 13%;
@@ -36,7 +36,7 @@ table {
 #fechaEstado{
     width: 10%;
 }
-[id^="bordeDerecho"],[id^="pendienteDerecha"],#pendienteVacioDerecha,#bordeD,#bordeDer,#bordeDerechoVacio {
+[id^="bordeDerecho"],[id^="pendienteDerecha"],[id^="esperarDerecha"],#pendienteVacioDerecha,#bordeD,#bordeDer,#bordeDerechoVacio,#esperaVacioDerecha,[id^="ladoDerecho"],#ladoDerechoVacio{
     border-right: 1px solid #000;
 }
 .seleccion{
@@ -48,6 +48,11 @@ table {
 .guardarCambios{
     text-align: center;
 }
+
+.tableEstatus {
+    background-color: #1E2943;
+}
+
 @media only screen and (max-width: 600px) {
     /* Estilos para dispositivos móviles */
     th, td {

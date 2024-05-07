@@ -1,9 +1,9 @@
 document.addEventListener("DOMContentLoaded", function () {
     // Activar la primera opción por defecto
-    mostrarContenido(document.querySelector('.opcion-menu'));
+    mostrarContenido('asignaciones');
 });
 
-function mostrarContenido(opcionSeleccionada) {
+function mostrarContenido(id) {
     // Oculta todos los contenidos
     var contenidos = document.querySelectorAll('.contenido-individual');
     contenidos.forEach(function(contenido) {
@@ -11,7 +11,6 @@ function mostrarContenido(opcionSeleccionada) {
     });
 
     // Muestra el contenido seleccionado
-    var id = opcionSeleccionada.getAttribute('data-id');
     var contenidoSeleccionado = document.getElementById(id);
     if (contenidoSeleccionado) {
         contenidoSeleccionado.style.display = 'block';
@@ -24,5 +23,8 @@ function mostrarContenido(opcionSeleccionada) {
     });
 
     // Agrega la clase 'seleccionada' a la opción del menú seleccionada
-    opcionSeleccionada.classList.add('seleccionada');
+    var opcionSeleccionada = document.querySelector('.opcion-menu[data-id="' + id + '"]');
+    if (opcionSeleccionada) {
+        opcionSeleccionada.classList.add('seleccionada');
+    }
 }

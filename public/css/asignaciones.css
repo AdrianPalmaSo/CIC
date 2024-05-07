@@ -14,7 +14,7 @@
 }
 
 #fechaSolicitud{
-    text-align: center;
+    text-align: right;
     margin-right: 2em;
     margin-bottom: 0;
 }
@@ -61,30 +61,7 @@
     padding: 4px;
 }
 
-/* Botón generar */
-.btnGenerar {
-    display: flex;
-    justify-content: center; 
-    margin-top: 1.5em;
-}
 
-#btnGenerar,
-#btnFiltrar {
-    height: 2em;
-    background-color: #0D1642;
-    color: white;
-    font-weight: bold;
-    border: none;
-    border-radius: 3px;
-    margin-bottom: 1em;
-    width: auto;
-}
-
-#btnGenerar:hover,
-#btnFiltrar:hover {
-    color: #0D1642;
-    background-color: white;
-}
 
 /*Tabla historial*/
 .historialSolicitudes h2,#tituloHistorialSoli{
