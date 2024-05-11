@@ -373,9 +373,9 @@ app.get('/obtener-informacion-folio/:folioSolicitud',authPage('Admin'), (req, re
 app.post('/forgot-password', async (req, res) => {
     const  email  = req.body.email;
     const emailVerified = await query(`SELECT * FROM usuarios WHERE Correo =  '${email}'`);
-    const idUsuario = emailVerified[0].IdUsuario;
     // Check if the email exists in your user database
-     if (emailVerified)  {
+     if (emailVerified.length > 0) {  
+        const idUsuario = emailVerified[0].IdUsuario;
        // Generate a reset token
        const token = crypto.randomBytes(20).toString('hex');
        const tokenExpira = new Date(); // Obtiene la fecha y hora actual
@@ -423,7 +423,7 @@ app.get('/reset-password/:token', async (req, res) => {
     const { token } = req.params;
     // Check if the token exists and is still valid
     const validarToken = await query(`SELECT * FROM reset_password WHERE Token = "${token}" AND FechaExpiracion > NOW()`)
-    if (validarToken) {
+    if (validarToken.length > 0) {
       // Render a form for the user to enter a new password
       res.render('cambiarContraseña', { token: token });
     } else {
@@ -436,9 +436,9 @@ app.get('/reset-password/:token', async (req, res) => {
     let hashPass = await bcryptjs.hash(password, 8);
     // Find the user with the given token and update their password
     const usuario = await query(`SELECT IdUsuario FROM reset_password WHERE Token = "${token}"`);
-    if (usuario) {
+    if (usuario.length > 0) {
       const actualizarPass = await query(`UPDATE usuarios SET Contrasena = "${hashPass}" WHERE IdUsuario = ${usuario[0].IdUsuario}`);
-      if(actualizarPass){
+      if(actualizarPass.length > 0){
         await query(`DELETE FROM reset_password WHERE Token =  "${token}"`);
         // Remove the reset token after the password is updated
         res.send(`
