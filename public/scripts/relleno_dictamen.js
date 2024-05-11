@@ -1,6 +1,5 @@
 function buscarFolio() {
     // Obtén el folio ingresado por el usuario
-    console.log('Función buscarFolio llamada.');
     var folioSolicitud = document.getElementById('folioSolicitudDictamen').value;
 
     // Realiza una solicitud AJAX al servidor para obtener la información del folio

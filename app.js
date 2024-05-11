@@ -45,6 +45,7 @@ app.use(session({
  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
  });
  app.use(limiter);
+ app.set('trust proxy', false);
 
 //8.- Invocar conexion a DB
 const connection = require('./database/db');
@@ -128,7 +129,6 @@ app.get('/estadisticas', async (req, res) => {
         // Realizar la consulta SQL para obtener las solicitudes con la fecha desdeFecha
         const fecha = desdeFecha
         const fechaFinal = hastaFecha
-        console.log(fecha);
         const folios = await query(`SELECT * FROM ${tipo} WHERE Fecha BETWEEN '${fecha}' AND '${fechaFinal}'`);
         const conteoEstados = await query(`SELECT Estado AS estado, COUNT(*) AS total FROM ${tipo} WHERE Fecha BETWEEN '${fecha}' AND '${fechaFinal}' GROUP BY Estado`);
 
@@ -160,13 +160,6 @@ app.get('/estadisticas', async (req, res) => {
                                                     JOIN vales v ON s.FolioSolicitud = v.FolioSolicitud
                                                     WHERE s.Estado = 'Cerrado'
                                                     AND s.Fecha BETWEEN '${fecha}' AND '${fechaFinal}'`);
-        console.log(folios);
-        console.log(conteoEstados);
-        console.log(usuariosPorSoli);
-        console.log(asignacionesTecnicos);
-        console.log(solucionesDictamen);
-        console.log(solicitudesSinDictamen);
-        console.log(solicitudesConDictamen);
         // Renderizar la vista de estadísticas y pasar los datos
         res.render('estadisticas', { tipo, desdeFecha, hastaFecha, objetos: folios, conteo:conteoEstados, usuariosPorSoli:usuariosPorSoli, asignacionesTecnicos:asignacionesTecnicos, solucionesDictamen:solucionesDictamen, solicitudesSinDictamen:solicitudesSinDictamen, solicitudesConDictamen:solicitudesConDictamen});
     } catch (error) {
@@ -182,10 +175,7 @@ app.get('/reportes', async (req, res) => {
         // Realizar la consulta SQL para obtener las solicitudes con la fecha desdeFecha
         const fecha = desdeFecha
         const fechaFinal = hastaFecha
-        console.log(fecha);
         const queryParaReportes = await query(`SELECT * FROM ${tipo} WHERE Fecha BETWEEN '${fecha}' AND '${fechaFinal}'`)
-        console.log("-----------------aaaaaaaaaaaaaaaaaaa--------------------");
-        console.log(queryParaReportes)
         // Renderizar la vista de estadísticas y pasar los datos
         res.render('reportes', { tipo, desdeFecha, hastaFecha, objetos: queryParaReportes, titulo, nombre, oficio, exp, area });
     } catch (error) {
@@ -246,7 +236,6 @@ app.get('/panelUsuario',authPage(["Usuario","Admin","Tecnico"]), async (req, res
     SELECT s.FolioSolicitud AS FolioSolicitud, s.Fecha AS Fecha, s.Equipo AS Equipo, s.Estado AS Estado, CASE WHEN v.FolioSolicitud IS NOT NULL THEN 'Disponible' ELSE 'No Disponible' END AS Vale, CASE WHEN d.FolioSolicitud IS NOT NULL THEN 'Disponible' ELSE 'No Disponible' END AS Dictamen FROM solicitudes s LEFT JOIN vales v ON s.FolioSolicitud = v.FolioSolicitud LEFT JOIN dictamenes d ON s.FolioSolicitud = d.FolioSolicitud WHERE s.IdUsuario = ${usuario} ORDER BY FolioSolicitud DESC;
     `;
     const historial = await query(historialUsuario);
-    console.log(edificios);
     res.render('panelUsuario', {
         edificios: edificios,
         login: req.session.loggedin,
@@ -615,14 +604,12 @@ app.post('/solicitud', async(req, res) => {
     if (otroInput) {
         equipo += (equipo ? ':' : '') + otroInput;
     }
-    console.log(otroInput);
     connection.query('INSERT INTO solicitudes SET ?', {IdUsuario:usuario,Fecha:fecha,Hora:hora,Telefono:telefono, IdEdificio:edificio, UbicacionFisica:ubicacion, Equipo:equipo, Descripcion: descripcion,IdAsignacion:0}, async(error, results)=> {
         if(error){
             console.log(error);
         }else{
             enviarMail(1,req.session.correoUser);
             const idSolicitud = results.insertId;
-            console.log(idSolicitud);
             const logQuery = `INSERT INTO solicitudes_log (IdUsuario, FolioSolicitud, NuevoEstado, Fecha, Hora) VALUES (${req.session.idUsuario},${idSolicitud},"Abierto","${fecha}","${hora}")`;
 
             connection.query(logQuery, (error, cambioResults) => {
@@ -683,7 +670,6 @@ app.post('/solicitudAdmin',authPage('Admin'), async(req, res) => {
         }else{
             enviarMail(1,correoUsuario);
             const idSolicitud = results.insertId;
-            console.log(idSolicitud);
             const logQuery = `INSERT INTO solicitudes_log (IdUsuario, FolioSolicitud, NuevoEstado, Fecha, Hora) VALUES (${idUsuario},${idSolicitud},"Abierto","${fecha}","${hora}")`;
 
             connection.query(logQuery, (error, cambioResults) => {
@@ -806,9 +792,6 @@ app.post('/vales', async(req, res) => {
     const estado = req.body.estatus;
     const caracteris = req.body.caracteristicas;
     const [idTecnico, correoTecnico] = req.body.tecnico.split('|');
-    console.log('ABAJO DEBE APARECER EL ID DEL TECNICO')
-    console.log(idTecnico) 
-    console.log(correoTecnico)
     // Añadir el valor de otroInput a la cadena de equipos
     if (otroInput) {
         equipo += (equipo ? ':' : '') + otroInput;
@@ -896,7 +879,7 @@ app.post('/guardar-datos-y-generar-pdf', async (req, res) => {
     const fecha = obtenerFechaHoraActual();
     const folioSolicitudDictamen = req.session.folioSolicitudDictamen;
     const vale = req.body.valeId;
-    console.log(folioSolicitudDictamen);
+    (folioSolicitudDictamen);
     const equipoDictamen = req.body.equipoDictamen;
     const marcaEquipo = req.body.marcaEquipo;
     const modeloEquipo = req.body.modeloEquipo;
@@ -907,7 +890,6 @@ app.post('/guardar-datos-y-generar-pdf', async (req, res) => {
     const observacionesDictamen = req.body.observacionesDictamen;
     const descripcionDictamen = req.body.descripcionDictamen;
     const dirigidoA = req.body.dirigidoA;
-    console.log(dirigidoA);
     connection.query('INSERT INTO dictamenes SET ?', {
         Encargado: usuario,
         Fecha: fecha,
@@ -1019,8 +1001,6 @@ app.post('/actualizar-estado', async (req, res) => {
             res.status(500).json({ error: 'Error al obtener el estado original' });
         } else {
             const usuarioEmail = results[0].Correo;
-            console.log(usuarioEmail);
-            console.log('ARRRIBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA');
             const estadoOriginal = results[0].Estado;
             // Ejecuta la consulta para cambiar el estado
             connection.query(cambiarEstado, [nuevoEstado, folio], (updateError, updateResults) => {
@@ -1132,7 +1112,6 @@ app.post('/crearDiagnostico', async (req, res) => {
             });
         } else {
             const idTecnico = results[0].IdTecnico; // Se obtiene el IdTecnico de los resultados de la consulta
-            console.log('IdTecnico obtenido:', idTecnico);
 
             // Inserción del diagnóstico y solución en la tabla asignaciones
             connection.query('UPDATE asignaciones SET Diagnostico = ?, Solucion = ? WHERE IdSolicitud = ?',
