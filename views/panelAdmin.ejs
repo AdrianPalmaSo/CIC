@@ -371,10 +371,6 @@
 <body>
 <div class="container" style="max-width: 100%;">
     <h2 id="estadoSolicitudes">Estado de solicitudes</h2>
-    <!-- Agrega campos de entrada de fecha -->
-    <input type="date" id="fechaInicio">
-    <input type="date" id="fechaFin">
-    <button type="button" class="btn btn-outline-dark" onclick="#">Filtrar</button>
     <div class="guardarCambios">
         <button type="button" class="btn btn-outline-dark" id="guardarCambios">Guardar cambios</button>
     </div>
@@ -382,10 +378,10 @@
         <table  class="table" id="estatusTabla">
             <tr class="tableEstatus">
                 <th colspan="5" class="tablaTitulos">Abierto</th>
-                <th colspan="5" class="tablaTitulos">Asignadas</th>
-                <th colspan="5" class="tablaTitulos">En Proceso</th>
-                <th colspan="5" class="tablaTitulos">En Espera</th>
-                <th colspan="5" class="tablaTitulos">Cerrado</th>
+                <th colspan="4" class="tablaTitulos">Asignadas</th>
+                <th colspan="4" class="tablaTitulos">En Proceso</th>
+                <th colspan="4" class="tablaTitulos">En Espera</th>
+                <th colspan="4" class="tablaTitulos">Cerrado</th>
             </tr>
         <tbody>
             <tr class="table-secondary">
@@ -396,23 +392,19 @@
                 <td id="bordeD">Estatus</td>
                 <td >Folio</td>
                 <td>Nombre</td>
-                <td>Fecha</td>
                 <td>Tecnico</td>
                 <td id="bordeDer">Estatus</td>
                 <td >Folio</td>
                 <td>Nombre</td>
                 <td>Equipo</td>
-                <td>Fecha</td>
                 <td id="bordeDer">Estatus</td>
                 <td >Folio</td>
                 <td>Nombre</td>
                 <td>Equipo</td>
-                <td>Fecha</td>
                 <td id="bordeDer">Estatus</td>
                 <td>Folio</td>
                 <td>Nombre</td>
                 <td>Equipo</td>
-                <td>Fecha</td>
                 <td>Estatus</td>
             </tr>
             <tr class="table-light">
@@ -443,7 +435,6 @@
                         <% if (i < asignada.length) { %>
                             <td class="bg-warning"><%= asignada[i].FolioSolicitud %></td>
                             <td class="bg-warning"><%= asignada[i].UsuarioNombre %></td>
-                            <td class="bg-warning fechaEstado" id="fechaEstado<%= i %>"><%= asignada[i].Fecha %></td>
                             <td class="bg-warning" id="equipoEstado<%= i %>"><%= asignada[i].Nombre %></td>
                             <td class="seleccion bg-warning" id="ladoDerecho<%= i %>" >
                                 <select class="form-select cambiarEstado" data-folio="<%= asignada[i].FolioSolicitud %>">
@@ -464,7 +455,6 @@
                             <td class="bg-info"><%= pendiente[i].FolioSolicitud %></td>
                             <td class="bg-info"><%= pendiente[i].Nombre %></td>
                             <td class="bg-info"><%= pendiente[i].Equipo %></td>
-                            <td class="bg-info fechaEstado" id="fechaEstado<%= i %>"><%= pendiente[i].Fecha %></td>
                             <td class="seleccion bg-info" id="pendienteDerecha<%= i %>">
                                 <select class="form-select cambiarEstado" data-folio="<%= pendiente[i].FolioSolicitud %>">
                                     <option value="Proceso" selected>En Proceso</option>
@@ -485,7 +475,6 @@
                             <td class="bg-primary"><%= espera[i].FolioSolicitud %></td>
                             <td class="bg-primary"><%= espera[i].Nombre %></td>
                             <td class="bg-primary"><%= espera[i].Equipo %></td>
-                            <td class="bg-primary fechaEstado" id="fechaEstado<%= i %>"><%= espera[i].Fecha %></td>
                             <td class="seleccion bg-primary" id="esperarDerecha<%= i %>">
                                 <select class="form-select cambiarEstado" data-folio="<%= espera[i].FolioSolicitud %>">
                                     <option value="Proceso">En Proceso</option>
@@ -506,7 +495,6 @@
                             <td class="bg-success"><%= cerrado[i].FolioSolicitud %></td>
                             <td class="bg-success"><%= cerrado[i].Nombre %></td>
                             <td class="bg-success"><%= cerrado[i].Equipo %></td>
-                            <td class="bg-success fechaEstado" id="fechaEstado<%= i %>"><%= cerrado[i].Fecha %></td>
                             <td class="seleccion bg-success" id="ladoDerecho<%= i %>" >
                                 <select class="form-select cambiarEstado" data-folio="<%= cerrado[i].FolioSolicitud %>">
                                     <option value="Asignada" selected>Asignada</option>
@@ -1228,6 +1216,134 @@
 </body>
 </div>
 
+
+<!-- Sección de estadisticas -->
+
+<div id="Estadisticas" class="contenido-individual">
+<!-- Contenido de historial -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="#">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <title>Reportes de uso</title>
+</head>
+    <body>
+    <div class="container" style="max-width: 100%;">
+        <h2 id="estadoSolicitudes">Reportes de uso</h2>
+        <div class="container-xl px-4 mt-4">
+            <div class="row">
+                <div class="col">
+                    <div class="card mb-4">
+                        <div class="card-header">Detalles del reporte</div>
+                        <div class="card-body">
+                            <form method="post" action="#">
+                                <!-- Form Row-->
+                                <div class="row gx-3 mb-3">
+                                    <div class="col md-6">
+                                        <label class="small mb-1 is-required" for="input_tipo">
+                                            Tipo de solicitudes:
+                                        </label>
+                                        <select class="form-select form-select-mb mb-1" id="input_tipo" autocomplete="off"
+                                                name="tipo">
+                                                <option value="solicitudes" selected>Solicitudes</option>
+                                                <option value="vales">Vales</option>
+                                                <option value="dictamenes">Dictámenes</option>
+                                        </select>
+                                    </div>
+                                <div class="row gx-3 mb-3 ">
+                                    <p class="text-justify mt-2 mb-0">Seleccione el periodo de tiempo que desea incluir en el reporte</p>
+
+                                    <div class="col-md-6">
+                                        <label class="small mb-1 is-required" for="input_desde">
+                                            Desde:
+                                        </label>
+                                        <input class="form-control" id="input_desde" type="date" required
+                                               autocomplete="off" name="desdeFecha"
+                                               placeholder="Ingrese desde que fecha"/>
+                                    </div>
+
+                                    <div class="col-md-6 ">
+                                        <label class="small mb-1 is-required" for="input_hasta">
+                                            Hasta:
+                                        </label>
+                                        <div class="input-group">
+                                            <input type="date" class="form-control" name="hastaFecha" required autocomplete="off"
+                                                   placeholder="Ingrese hasta que fecha" id="input_hasta">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row gx-3 mb-3 ">
+                                    <p class="text-justify">Introduzca los datos complementarios del reporte</p>
+                                    <div class="col-md-4">
+                                        <label class="small mb-1 is-required" for="input_titulo">
+                                            Título:
+                                        </label>
+                                        <select class="form-select form-select-mb mb-1" id="input_titulo" autocomplete="off"
+                                                name="titulo">
+                                                <option value="Ing.">Ing.</option>
+                                                <option value="Lic.">Lic.</option>
+                                                <option value="Dr.">Dr.</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label class="small mb-1 is-required" for="input_nombre">
+                                            Nombre:
+                                        </label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" name="nombre" required autocomplete="off"
+                                                   placeholder="Ingrese su nombre" id="input_nombre">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label class="small mb-1 is-required" for="input_oficio">
+                                            Núm. de oficio:
+                                        </label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" name="oficio" required autocomplete="off"
+                                                   placeholder="P.E. 10/15" id="input_oficio">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label class="small mb-1 is-required" for="input_expediente">
+                                            Expediente:
+                                        </label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" name="expediente" required autocomplete="off"
+                                                   placeholder="P.E. MR-15" id="input_expediente">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label class="small mb-1 is-required" for="input_area">
+                                            Área:
+                                        </label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" name="area" required autocomplete="off"
+                                                   placeholder="P.E. 10/15" id="input_area">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-around">
+                                    <button type="button" id="generarReportesBtn" class="btn text-light" style="background-color: #0D1642;">Generar reporte</button>
+                                    <button type="button" id="generarEstadisticasBtn" class="btn text-light" style="background-color: #0D1642;">Generar estadisticas</button>
+                                </div>
+                                </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </body>
+</div>
+<script src="resources/scripts/estadisticas.js"></script>
+</main>
+
 <!-- HISTORIAL 2----------------------------------------------------------------------------------------------- -->
 <div id="Historial2" class="contenido-individual">
     <!-- Contenido de historial -->
@@ -1273,7 +1389,7 @@
                             <th>Dictamen</th>
                             <th>Vale-PDF</th>
                             <th>Dicta-PDF</th>
-                            <th>Diagnóstico Técnico</th>
+                            <th>Diagnóstico técnico</th>
                     </thead>
 
                     <% vales.forEach((variables) => { %>
@@ -1302,7 +1418,7 @@
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLongTitle3">Técnicos</h5>
+                            <h5 class="modal-title" id="exampleModalLongTitle3">Diagnóstico técnico</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
@@ -1348,135 +1464,6 @@
     </script>
 </body>
 </div>
-    <!-- Agrega aquí más secciones de contenido según sea necesario -->
-
-    <!-- Agrega aquí más secciones de contenido según sea necesario -->
-<!-- Sección de estadisticas -->
-
-    <div id="Estadisticas" class="contenido-individual">
-        <!-- Contenido de historial -->
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="#">
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-        <title>Reportes de uso</title>
-    </head>
-    <body>
-        <div class="container" style="max-width: 100%;">
-            <h2 id="estadoSolicitudes">Reportes de uso</h2>
-            <div class="container-xl px-4 mt-4">
-                <div class="row">
-                    <div class="col">
-                        <div class="card mb-4">
-                            <div class="card-header">Detalles del reporte</div>
-                            <div class="card-body">
-                                <form method="post" action="#">
-                                    <!-- Form Row-->
-                                    <div class="row gx-3 mb-3">
-                                        <div class="col md-6">
-                                            <label class="small mb-1 is-required" for="input_tipo">
-                                                Tipo de solicitudes:
-                                            </label>
-                                            <select class="form-select form-select-mb mb-1" id="input_tipo" autocomplete="off"
-                                                    name="tipo">
-                                                    <option value="solicitudes" selected>Solicitudes</option>
-                                                    <option value="vales">Vales</option>
-                                                    <option value="dictamenes">Dictámenes</option>
-                                            </select>
-                                        </div>
-                                    <div class="row gx-3 mb-3 ">
-                                        <p class="text-justify mt-2 mb-0">Seleccione el periodo de tiempo que desea incluir en el reporte</p>
-
-                                        <div class="col-md-6">
-                                            <label class="small mb-1 is-required" for="input_desde">
-                                                Desde:
-                                            </label>
-                                            <input class="form-control" id="input_desde" type="date" required
-                                                   autocomplete="off" name="desdeFecha"
-                                                   placeholder="Ingrese desde que fecha"/>
-                                        </div>
-
-                                        <div class="col-md-6 ">
-                                            <label class="small mb-1 is-required" for="input_hasta">
-                                                Hasta:
-                                            </label>
-                                            <div class="input-group">
-                                                <input type="date" class="form-control" name="hastaFecha" required autocomplete="off"
-                                                       placeholder="Ingrese hasta que fecha" id="input_hasta">
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="row gx-3 mb-3 ">
-                                        <p class="text-justify">Introduzca los datos complementarios del reporte</p>
-                                        <div class="col-md-4">
-                                            <label class="small mb-1 is-required" for="input_titulo">
-                                                Título:
-                                            </label>
-                                            <select class="form-select form-select-mb mb-1" id="input_titulo" autocomplete="off"
-                                                    name="titulo">
-                                                    <option value="Ing.">Ing.</option>
-                                                    <option value="Lic.">Lic.</option>
-                                                    <option value="Dr.">Dr.</option>
-                                            </select>
-                                        </div>
-
-                                        <div class="col-md-4">
-                                            <label class="small mb-1 is-required" for="input_nombre">
-                                                Nombre:
-                                            </label>
-                                            <div class="input-group">
-                                                <input type="text" class="form-control" name="nombre" required autocomplete="off"
-                                                       placeholder="Ingrese su nombre" id="input_nombre">
-                                            </div>
-                                        </div>
-
-                                        <div class="col-md-4">
-                                            <label class="small mb-1 is-required" for="input_oficio">
-                                                Núm. de oficio:
-                                            </label>
-                                            <div class="input-group">
-                                                <input type="text" class="form-control" name="oficio" required autocomplete="off"
-                                                       placeholder="P.E. 10/15" id="input_oficio">
-                                            </div>
-                                        </div>
-
-                                        <div class="col-md-4">
-                                            <label class="small mb-1 is-required" for="input_expediente">
-                                                Expediente:
-                                            </label>
-                                            <div class="input-group">
-                                                <input type="text" class="form-control" name="expediente" required autocomplete="off"
-                                                       placeholder="P.E. MR-15" id="input_expediente">
-                                            </div>
-                                        </div>
-
-                                        <div class="col-md-4">
-                                            <label class="small mb-1 is-required" for="input_area">
-                                                Área:
-                                            </label>
-                                            <div class="input-group">
-                                                <input type="text" class="form-control" name="area" required autocomplete="off"
-                                                       placeholder="P.E. 10/15" id="input_area">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="d-flex justify-content-around">
-                                        <button type="button" id="generarReportesBtn" class="btn text-light" style="background-color: #0D1642;">Generar reporte</button>
-                                        <button type="button" id="generarEstadisticasBtn" class="btn text-light" style="background-color: #0D1642;">Generar estadisticas</button>
-                                    </div>
-                                    </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        </body>
-    </div>
-    <script src="resources/scripts/estadisticas.js"></script>
-</main>
 
 <footer class="pie-pagina">
     <div class="enlaces-sociales">
