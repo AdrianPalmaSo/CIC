@@ -1,6 +1,15 @@
 document.addEventListener("DOMContentLoaded", function () {
     // Activar la primera opción por defecto
     mostrarContenido('asignaciones');
+
+    // Evento de clic en botones "Redireccionar"
+    document.querySelectorAll('#TablaHistorialAsignaciones [data-redireccion]').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            const folioSolicitud = btn.getAttribute('data-folio');
+            mostrarContenido('diagnosticos');
+            seleccionarFolioEnDiagnostico(folioSolicitud);
+        });
+    });
 });
 
 function mostrarContenido(id) {
@@ -26,5 +35,12 @@ function mostrarContenido(id) {
     const opcionSeleccionada = document.querySelector('.opcion-menu[data-id="' + id + '"]');
     if (opcionSeleccionada) {
         opcionSeleccionada.classList.add('seleccionada');
+    }
+}
+
+function seleccionarFolioEnDiagnostico(folio) {
+    const selectSolicitudes = document.getElementById('folios');
+    if (selectSolicitudes) {
+        selectSolicitudes.value = folio;
     }
 }
