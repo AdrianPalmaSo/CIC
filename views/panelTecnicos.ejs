@@ -123,7 +123,7 @@
                 <div class="historialSolicitudes" id="contenedorDiagnostico">
                     <h2 >Generación de diagnósticos técnicos</h2>
                     <br>
-                    <form action="crearDiagnostico" method="post">
+                    <form id="formDiagnostico" method="post">
                         <div class="mb-3 row">
                             <label for="folios" class="col-sm-2 col-form-label labelMayor">Solicitudes asignadas</label>
                             <div class="col-sm-10">
@@ -137,13 +137,20 @@
                         <!-- Agregar campo oculto para el folio seleccionado -->
                         <input type="hidden" name="folioSeleccionado" id="folioSeleccionado">
                         <div class="mb-3 row">
+                            <label for="comentarioT" class="col-sm-2 col-form-label labelMayor">Comentario del Técnico:</label>
+                            <textarea class="form-control" placeholder="(Opcional) Ej: En espera de piezas" name="comentarioT" id="comentarioT" rows="8"></textarea>
+                        </div>
+                        <div class="enviarComentario">
+                            <button type="submit" class="btn btn-outline-dark" id="enviarComentario" value="Submit" onclick="setAction('crearComentario')">Enviar comentario</button>
+                        </div>
+                        <div class="mb-3 row">
                             <label for="diagnosticoT" class="col-sm-2 col-form-label labelMayor">Diagnóstico Técnico:</label>
                             <textarea class="form-control" name="diagnosticoT" id="diagnosticoT" rows="8"></textarea>
                             <label for="solucion" class="col-sm-2 col-form-label labelMayor">Solución aplicada:</label>
                             <textarea class="form-control" name="solucion" id="solucion" rows="8" required></textarea>
                         </div>
                         <div class="enviarDiagnostico">
-                            <button type="submit" class="btn btn-outline-dark" id="enviarDiagnostico" value="Submit">Enviar</button>
+                            <button type="submit" class="btn btn-outline-dark" id="enviarDiagnostico" value="Submit" onclick="setAction('crearDiagnostico')">Cerrar diagnóstico</button>
                         </div>
                     </form>     
             </div>

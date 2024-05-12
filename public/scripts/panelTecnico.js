@@ -44,3 +44,28 @@ function seleccionarFolioEnDiagnostico(folio) {
         selectSolicitudes.value = folio;
     }
 }
+
+function setAction(action) {
+    var form = document.getElementById('formDiagnostico');
+    var comentarioT = document.getElementById('comentarioT');
+    var solucion = document.getElementById('solucion');
+
+    // Si se hace clic en "Enviar comentario"
+    if (action === 'crearComentario') {
+        // Establecer la acción del formulario
+        form.action = 'crearComentario';
+        // Eliminar la validación del campo solucion
+        solucion.removeAttribute('required');
+    }
+    // Si se hace clic en "Cerrar diagnóstico"
+    else if (action === 'crearDiagnostico') {
+        // Establecer la acción del formulario
+        form.action = 'crearDiagnostico';
+        // Agregar validación al campo solucion
+        solucion.setAttribute('required', 'required');
+    }
+
+    // Actualizar el valor del campo oculto de folioSeleccionado
+    var selectValue = document.getElementById('folios').value;
+    document.getElementById('folioSeleccionado').value = selectValue;
+}

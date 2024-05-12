@@ -1089,6 +1089,50 @@ app.post('/actualizarEstadoSolicitud', async (req, res) => {
     });
 });
 
+//Creación de comentario del técnico
+app.post('/crearComentario', async (req, res) => {
+    const folioSeleccionado = req.body.folios;
+    const comentario = req.body.comentarioT;
+
+    try {
+        // Consulta para obtener el IdTecnico de la tabla asignaciones
+        const [tecnicoRows] = await connection.promise().query('SELECT IdTecnico FROM asignaciones WHERE IdSolicitud = ?', [folioSeleccionado]);
+        const idTecnico = tecnicoRows[0].IdTecnico;
+
+        // Inserción del comentario en la tabla asignaciones
+        await connection.promise().query('UPDATE asignaciones SET Mensaje = ? WHERE IdSolicitud = ?', [comentario, folioSeleccionado]);
+
+        // Consulta para obtener las asignaciones actualizadas
+        const [asignacionesRows] = await connection.promise().query('SELECT * FROM asignaciones WHERE IdTecnico = ?', [idTecnico]);
+
+        // Renderizar la página con éxito
+        res.render('panelTecnicos', {
+            alert: {
+                alertTitle: 'Éxito',
+                alertMessage: 'Comentario enviado correctamente',
+                alertIcon: 'success',
+                showConfirmButton: false,
+                timer: 1500,
+                ruta: 'panelTecnicos' // Redirige a la misma página
+            },
+            asignaciones: asignacionesRows // Pasar las asignaciones al archivo EJS
+        });
+    } catch (error) {
+        console.error('Error:', error);
+        // Mostrar un mensaje de error utilizando SweetAlert2
+        res.render('panelTecnicos', {
+            alert: {
+                alertTitle: 'Error',
+                alertMessage: 'Error interno del servidor',
+                alertIcon: 'error',
+                showConfirmButton: true,
+                timer: null,
+                ruta: 'panelTecnicos' // Redirige a la misma página
+            }
+        });
+    }
+});
+
 // Creación de diagnósticos técnicos y soluciones aplicadas
 app.post('/crearDiagnostico', async (req, res) => {
     const folioSeleccionado = req.body.folios; // Obtener el folio seleccionado del cuerpo de la solicitud
