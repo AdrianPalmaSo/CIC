@@ -75,6 +75,7 @@
                                 <th>Serie</th>
                                 <th>Marca</th>
                                 <th>Estado</th>
+                                <th>Generar</th>
                             </thead>
                             <% asignaciones.forEach((asignacion) => { %>
                                 <tr>
@@ -92,6 +93,7 @@
                                             <option value="Proceso">En proceso</option>
                                         </select>
                                     </td>
+                                    <td><button class="btn btn-primary" data-redireccion data-folio="<%= asignacion.FolioSolicitud %>">Redireccionar</button></td>
                                 </tr>
                                 <% }); %>
                         </table>
