@@ -39,8 +39,9 @@
 
 <!-- Menú de opciones -->
 <nav class="menu">
-    <div class="opcion-menu" data-id="solicitud-de-reportes" onclick="mostrarContenido('solicitud-de-reportes')">Solicitud de Servicio</div>
     <div class="opcion-menu" data-id="historial" onclick="mostrarContenido('historial')">Historial</div>
+    <div class="opcion-menu" data-id="solicitud-de-reportes" onclick="mostrarContenido('solicitud-de-reportes')">Solicitud de Servicio</div>
+
 </nav>
 
 <main class="contenido">
@@ -224,7 +225,7 @@
                                     <th>Estado</th>
                                     <th>Vale</th>
                                     <th>Dictamen</th>
-                                    <th>Encuesta de satisfacción</th>
+                                    <th>Encuesta</th>
                                 </thead>
                             <% historial.forEach(solicitud => { %>
                                 <!-- Fila de la tabla para cada solicitud en el historial -->
@@ -242,11 +243,20 @@
                                             <img src="resources/images/downloads.png" alt="Descargar Dictamen">
                                         </a> &nbsp &nbsp &nbsp <%= solicitud.Dictamen %></td>
                                     <td>
-                                        <form method="POST" action="/encuesta-satisfaccion?folioSolicitud=<%= solicitud.FolioSolicitud %>">
-                                            <button  type="submit" class="btn btn-encuesta" data-folio="" >
-                                                <img src="resources/images/encuesta.png" alt="Encuesta">
-                                            </button>
-                                        </form>
+                                        <% if (solicitud.Encuesta) { %>
+                                                <!-- Si la encuesta ya ha sido respondida -->
+                                                <p>Ya respondió</p>
+                                            <% } else if (solicitud.Estado === "Cerrado" && !solicitud.Encuesta) { %>
+                                                <!-- Si el estado es "Cerrado" y la encuesta no ha sido respondida -->
+                                                <form method="POST" action="/encuesta-satisfaccion?folioSolicitud=<%= solicitud.FolioSolicitud %>">
+                                                    <button type="submit" class="btn btn-encuesta" data-folio="">
+                                                        <img src="resources/images/envio.png" alt="Encuesta">
+                                                    </button>
+                                                </form>
+                                            <% } else { %>
+                                                <!-- Si el estado no es "Cerrado", no se muestra la imagen -->
+                                                <p>No disponible</p>
+                                            <% } %>
                                 </td>
                                 </tr>
                             <% }); %>

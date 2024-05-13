@@ -1390,6 +1390,7 @@
                             <th>Vale-PDF</th>
                             <th>Dicta-PDF</th>
                             <th>Diagnóstico técnico</th>
+                            <th>Nivel de satisfacción</th>
                     </thead>
 
                     <% vales.forEach((variables) => { %>
@@ -1408,6 +1409,9 @@
                                         <img src="resources/images/ver.png" alt="Ojo">
                                     </a>
                                 <% } %>
+                            </td>
+                            <td class="estado-td" data-estado="<%= variables.Encuesta %>">
+                                <%= variables.Encuesta %>
                             </td>
                         </tr>
                     <% }); %>
@@ -1445,6 +1449,7 @@
             </div>
     </div>
     <script src="resources/scripts/semaforoVales.js"></script>
+    <script src="resources/scripts/semaforoEncuesta.js"></script>
     <script>
         $(document).ready(function() {
             $('.btn-diagnostico').click(function() {

@@ -87,13 +87,14 @@ console.log(__dirname);
 
         }else if(opcion === 5) {
         textAsunto = 'Solicitud Asignada'
-        textoCorreo = 'Se le ha asignado una nueva solicitud de soporte técnico porfavor entre a su portal CIC Assitance para poder ver mas información';
+        textoCorreo = 'Se le ha asignado una nueva solicitud de soporte técnico porfavor entre a su portal CIC Assistance para poder ver mas información';
         htmlCorreo = '<div style="margin:auto;background-color: #f0f0f0;;padding: 1em;text-align:center;"><div style="background-color: #1E2943;border-bottom: 1px solid white;color:white;"><h1>Tiene una nueva solicitud asignada</h1></div><p>Se le ha asignado una nueva solicitud de soporte técnico porfavor entre a su portal CIC Assitance para poder ver mas información sobre la nueva asignación</p><p>Cualquier duda o  inquitud puede ir al CIC o marcar al 9818119800 con extensión: 3030107<p><p>Pagina web: [cicassistance.josapino.dev]</p></div>'
 
-        }else if(opcion === 6){
+        }else if(opcion === 6) {
         textAsunto = 'Solicitud cerrada'
-        textoCorreo = 'Su solicitud ha sido cerrada porfavor entre a su portal CIC Assitance para poder ver responder la encuesta de satisfacción sobre el servicio proporcionado';
-        htmlCorreo = '<div style="margin:auto;background-color: #f0f0f0;;padding: 1em;text-align:center;"><div style="background-color: #1E2943;border-bottom: 1px solid white;color:white;"><h1>Tiene una nueva solicitud asignada</h1></div><p>Se le ha asignado una nueva solicitud de soporte técnico porfavor entre a su portal CIC Assitance para poder ver mas información sobre la nueva asignación</p><p>Cualquier duda o  inquitud puede ir al CIC o marcar al 9818119800 con extensión: 3030107<p><p>Pagina web: [cicassistance.josapino.dev]</p></div>'
+        textoCorreo = 'Su solicitud ha sido cerrada porfavor entre a su portal CIC Assistance para poder responder la encuesta de satisfacción sobre el servicio proporcionado';
+        htmlCorreo = '<div style="margin:auto;background-color: #f0f0f0;;padding: 1em;text-align:center;"><div style="background-color: #1E2943;border-bottom: 1px solid white;color:white;"><h1>Su solicitud ha sido cerrada</h1></div><p>Su solicitud ha sido cerrada porfavor entre a su portal CIC Assistance para poder responder la encuesta de satisfacción sobre el servicio proporcionado</p><p>Cualquier duda o  inquitud puede ir al CIC o marcar al 9818119800 con extensión: 3030107<p><p>Pagina web: [cicassistance.josapino.dev]</p></div>'
+
      }
      const mensaje = {
          from: '"CIC Assistance 🤖" <cic.assistance2024@gmail.com>',
@@ -207,7 +208,7 @@ app.get('/panelTecnicos', authPage(["Tecnico", "Admin"]), async (req, res) => {
 
     try {
         const usuario = req.session.idUsuario;
-        const asignaciones = await query(`SELECT DISTINCT s.FolioSolicitud,s.Fecha,s.Descripcion, v.Equipo,v.NoSerieEquipo,v.MarcaEquipo,v.ModeloEquipo, u.IdUsuario as IdUsuarioTecnico, us.IdUsuario as IdUsuarioSolicitante, us.Nombre as NombreSolicitante FROM solicitudes s JOIN vales v ON s.FolioSolicitud = v.FolioSolicitud JOIN asignaciones a ON s.FolioSolicitud = a.IdSolicitud JOIN tecnicos t ON a.IdTecnico = t.IdTecnico JOIN usuarios u ON t.IdUsuario = u.IdUsuario JOIN usuarios us ON s.IdUsuario = us.IdUsuario WHERE u.IdUsuario = ${usuario} AND a.DIagnostico ='' AND a.Solucion =''`);
+        const asignaciones = await query(`SELECT DISTINCT s.FolioSolicitud,s.Fecha,s.Descripcion, v.Equipo,v.NoSerieEquipo,v.MarcaEquipo,v.ModeloEquipo, u.IdUsuario as IdUsuarioTecnico, us.IdUsuario as IdUsuarioSolicitante, us.Nombre as NombreSolicitante, COALESCE(a.Encuesta, 'No disponible') AS Encuesta FROM solicitudes s JOIN vales v ON s.FolioSolicitud = v.FolioSolicitud JOIN asignaciones a ON s.FolioSolicitud = a.IdSolicitud JOIN tecnicos t ON a.IdTecnico = t.IdTecnico JOIN usuarios u ON t.IdUsuario = u.IdUsuario JOIN usuarios us ON s.IdUsuario = us.IdUsuario WHERE u.IdUsuario = ${usuario} AND a.DIagnostico ='' AND a.Solucion =''`);
         
         res.render('panelTecnicos', {
             login: req.session.loggedin,
@@ -238,7 +239,7 @@ app.get('/panelUsuario',authPage(["Usuario","Admin","Tecnico"]), async (req, res
     const usuario = req.session.idUsuario;
     const edificios = await query('SELECT * FROM edificios');
     const historialUsuario = `
-    SELECT s.FolioSolicitud AS FolioSolicitud, s.Fecha AS Fecha, s.Equipo AS Equipo, s.Estado AS Estado, CASE WHEN v.FolioSolicitud IS NOT NULL THEN 'Disponible' ELSE 'No Disponible' END AS Vale, CASE WHEN d.FolioSolicitud IS NOT NULL THEN 'Disponible' ELSE 'No Disponible' END AS Dictamen FROM solicitudes s LEFT JOIN vales v ON s.FolioSolicitud = v.FolioSolicitud LEFT JOIN dictamenes d ON s.FolioSolicitud = d.FolioSolicitud JOIN asignaciones a ON s.FolioSolicitud = a.IdSolicitud WHERE s.IdUsuario = ${usuario} ORDER BY FolioSolicitud DESC;
+    SELECT s.FolioSolicitud AS FolioSolicitud, s.Fecha AS Fecha, s.Equipo AS Equipo, s.Estado AS Estado, CASE WHEN v.FolioSolicitud IS NOT NULL THEN 'Disponible' ELSE 'No Disponible' END AS Vale, CASE WHEN d.FolioSolicitud IS NOT NULL THEN 'Disponible' ELSE 'No Disponible' END AS Dictamen, COALESCE(a.Encuesta, 'No disponible') AS Encuesta FROM solicitudes s LEFT JOIN vales v ON s.FolioSolicitud = v.FolioSolicitud LEFT JOIN dictamenes d ON s.FolioSolicitud = d.FolioSolicitud JOIN asignaciones a ON s.FolioSolicitud = a.IdSolicitud WHERE s.IdUsuario = ${usuario} ORDER BY FolioSolicitud DESC;
     `;
     const historial = await query(historialUsuario);
     res.render('panelUsuario', {
@@ -282,7 +283,7 @@ app.get('/panelAdmin',authPage('Admin'), async (req, res) => {
     const resultadoVales = await query('SELECT COUNT(*) AS totalSolicitudes FROM vales');       
     const soliEspera = await query('SELECT solicitudes.*, usuarios.Correo,usuarios.Nombre FROM solicitudes JOIN usuarios ON solicitudes.IdUsuario = usuarios.IdUsuario WHERE solicitudes.Estado =  "Espera"')
     const soliAsignada = await query('SELECT solicitudes.*,u.Correo, u.Nombre as UsuarioNombre, tecnicos.Nombre, tecnicos.IdTecnico FROM solicitudes LEFT JOIN usuarios u ON solicitudes.IdUsuario = u.IdUsuario LEFT JOIN asignaciones ON solicitudes.IdAsignacion = asignaciones.IdAsignacion LEFT JOIN tecnicos ON asignaciones.IdTecnico = tecnicos.IdTecnico LEFT JOIN usuarios ON tecnicos.IdUsuario = usuarios.IdUsuario WHERE solicitudes.Estado = "Asignada"')
-    const inforVales = await query("SELECT v.*, COALESCE(d.idDictamen, 'No existe') AS IdDictamen, u.Nombre AS NombreUsuario, COALESCE(a.Diagnostico, 'No disponible') AS Diagnostico, COALESCE(a.Solucion, 'No disponible') AS Solucion FROM vales v LEFT JOIN dictamenes d ON v.idVale = d.idVale LEFT JOIN solicitudes s ON v.folioSolicitud = s.FolioSolicitud LEFT JOIN usuarios u ON s.IdUsuario = u.IdUsuario LEFT JOIN asignaciones a ON s.FolioSolicitud = a.IdSolicitud ORDER BY v.idVale DESC;");
+    const inforVales = await query("SELECT v.*, COALESCE(d.idDictamen, 'No existe') AS IdDictamen, u.Nombre AS NombreUsuario, COALESCE(a.Diagnostico, 'No disponible') AS Diagnostico, COALESCE(a.Solucion, 'No disponible') AS Solucion, COALESCE(a.Encuesta, 'No disponible') AS Encuesta FROM vales v LEFT JOIN dictamenes d ON v.idVale = d.idVale LEFT JOIN solicitudes s ON v.folioSolicitud = s.FolioSolicitud LEFT JOIN usuarios u ON s.IdUsuario = u.IdUsuario LEFT JOIN asignaciones a ON s.FolioSolicitud = a.IdSolicitud ORDER BY v.idVale DESC;");
     const resultadoDictamenes = await query('SELECT COUNT(*)  AS totalDictamenes FROM dictamenes;')
     const asignacionesTecnicos = await query('SELECT t.IdTecnico,t.Nombre AS NombreTecnico,t.Correo AS CorreoTecnico,COUNT(a.IdAsignacion) AS CantidadAsignaciones FROM tecnicos t INNER JOIN asignaciones a ON t.IdTecnico = a.IdTecnico GROUP BY t.IdTecnico, t.Nombre;')
 
@@ -441,12 +442,39 @@ app.get('/reset-password/:token', async (req, res) => {
             <meta charset="UTF-8">
             <meta http-equiv="refresh" content="5;url=/">
             <title>Contraseña Actualizada</title>
+            <style>
+                body {
+                    font-family: 'Roboto', sans-serif;
+                    background-color: #f0f0f0;
+                }
+                div {
+                    margin: 50px auto;
+                    width: 80%;
+                    text-align: center;
+                    background-color: #fff;
+                    padding: 20px;
+                    border-radius: 10px;
+                    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                }
+                h1 {
+                    color: #333;
+                }
+                h2 {
+                    color: #555;
+                }
+                p {
+                    color: #777;
+                }
+            </style>
         </head>
         <body>
-            <h1>Contraseña Actualizada con Éxito</h1>
-            <p>Serás redirigido a la pantalla de inicio en 5 segundos...</p>
+            <div>
+                <h1>Contraseña Actualizada con Éxito</h1>
+                <p>Serás redirigido a la pantalla de inicio en 5 segundos...</p>
+            </div>
+            
         </body>
-        </html>
+    </html>
     `);
       }
     } else {
@@ -551,18 +579,44 @@ app.post('/responder-encuesta', async (req, res) => {
             // Remove the reset token after the password is updated
             res.send(`
         <!DOCTYPE html>
-        <html lang="es">
-        <head>
-            <meta charset="UTF-8">
-            <meta http-equiv="refresh" content="5;url=/">
-            <title>Respuesta enviada</title>
-        </head>
-        <body>
-            <h1>¡La respuesta fue enviada con éxito!</h1>
-            <h2>Gracias por haber contestado la encuesta, se tomará en cuenta para mejorar nuestros servicios</h2>
-            <p>Serás redirigido a la pantalla de inicio en 5 segundos...</p>
-        </body>
-        </html>
+            <html lang="es">
+            <head>
+                <meta charset="UTF-8">
+                <meta http-equiv="refresh" content="5;url=/">
+                <title>Respuesta enviada</title>
+                <style>
+                    body {
+                        font-family: 'Roboto', sans-serif;
+                        background-color: #f0f0f0;
+                    }
+                    div {
+                        margin: 50px auto;
+                        width: 80%;
+                        text-align: center;
+                        background-color: #fff;
+                        padding: 20px;
+                        border-radius: 10px;
+                        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                    }
+                    h1 {
+                        color: #333;
+                    }
+                    h2 {
+                        color: #555;
+                    }
+                    p {
+                        color: #777;
+                    }
+                </style>
+            </head>
+            <body>
+                <div>
+                    <h1>¡La respuesta fue enviada con éxito!</h1>
+                    <h2>Gracias por haber contestado la encuesta, se tomará en cuenta para mejorar nuestros servicios</h2>
+                    <p>Serás redirigido a la pantalla de inicio en 5 segundos...</p>
+                </div>
+            </body>
+            </html>
     `);
         } else {
             res.status(500).send('Error al actualizar la encuesta');
@@ -1136,11 +1190,16 @@ app.post('/actualizar-estado', async (req, res) => {
                     // Inserta en el log solo si hay un cambio en el estado
                     if (estadoOriginal !== nuevoEstado) {
                         connection.query(logQuery, [req.session.idUsuario, folio, nuevoEstado, fecha, hora], (logError, logResults) => {
-                            if (logError) {
+                            if (nuevoEstado === 'Cerrado') {
+                                enviarMail(6, usuarioEmail);
+                                console.log('Correo enviado al usuario:', usuarioEmail);
+                            }
+                            else if (logError) {
                                 console.error('Error al insertar en el log:', logError);
                             } else {
                                 enviarMail(2,usuarioEmail);
                                 console.log('Cambio registrado en el log:', logResults);
+
                             }
                         });
                     }
@@ -1203,6 +1262,7 @@ app.post('/actualizarEstadoSolicitud', async (req, res) => {
 
     // Actualiza el estado de la solicitud en la base de datos
     connection.query('UPDATE solicitudes SET Estado = ? WHERE FolioSolicitud = ?', [nuevoEstado, folioSolicitud], (error, results) => {
+
         if (error) {
             console.error('Error al actualizar el estado de la solicitud:', error);
             res.status(500).send('Error interno del servidor');
