@@ -85,10 +85,15 @@ console.log(__dirname);
          textoCorreo = 'Se ha determinado el dictamen a su solicitud de soporte técnico, puede revisar mas detalles del dictamen en su portal cic assistance y puede pasar por su equipo al Centro de Computo';
          htmlCorreo = '<div style="margin:auto;background-color: #f0f0f0;;padding: 1em;text-align:center;"><div style="background-color: #1E2943;border-bottom: 1px solid white;color:white;"><h1>Hemos realizado un dictamen sobre su solicitud</h1></div><p>Se ha creado el dictamen a su solicitud de soporte técnico, puede revisar mas detalles del dictamen en su portal cic assistance y puede pasar por su equipo al Centro de Computo</p><p>Cualquier duda o  inquitud puede ir al CIC o marcar al 9818119800 con extensión: 3030107<p><p>Pagina web: [cicassistance.josapino.dev]</p></div>'
 
-        }else if(opcion === 5){
-         textAsunto = 'Solicitud Asignada'
-         textoCorreo = 'Se le ha asignado una nueva solicitud de soporte técnico porfavor entre a su portal CIC Assitance para poder ver mas información';
-         htmlCorreo = '<div style="margin:auto;background-color: #f0f0f0;;padding: 1em;text-align:center;"><div style="background-color: #1E2943;border-bottom: 1px solid white;color:white;"><h1>Tiene una nueva solicitud asignada</h1></div><p>Se le ha asignado una nueva solicitud de soporte técnico porfavor entre a su portal CIC Assitance para poder ver mas información sobre la nueva asignación</p><p>Cualquier duda o  inquitud puede ir al CIC o marcar al 9818119800 con extensión: 3030107<p><p>Pagina web: [cicassistance.josapino.dev]</p></div>'
+        }else if(opcion === 5) {
+        textAsunto = 'Solicitud Asignada'
+        textoCorreo = 'Se le ha asignado una nueva solicitud de soporte técnico porfavor entre a su portal CIC Assitance para poder ver mas información';
+        htmlCorreo = '<div style="margin:auto;background-color: #f0f0f0;;padding: 1em;text-align:center;"><div style="background-color: #1E2943;border-bottom: 1px solid white;color:white;"><h1>Tiene una nueva solicitud asignada</h1></div><p>Se le ha asignado una nueva solicitud de soporte técnico porfavor entre a su portal CIC Assitance para poder ver mas información sobre la nueva asignación</p><p>Cualquier duda o  inquitud puede ir al CIC o marcar al 9818119800 con extensión: 3030107<p><p>Pagina web: [cicassistance.josapino.dev]</p></div>'
+
+        }else if(opcion === 6){
+        textAsunto = 'Solicitud cerrada'
+        textoCorreo = 'Su solicitud ha sido cerrada porfavor entre a su portal CIC Assitance para poder ver responder la encuesta de satisfacción sobre el servicio proporcionado';
+        htmlCorreo = '<div style="margin:auto;background-color: #f0f0f0;;padding: 1em;text-align:center;"><div style="background-color: #1E2943;border-bottom: 1px solid white;color:white;"><h1>Tiene una nueva solicitud asignada</h1></div><p>Se le ha asignado una nueva solicitud de soporte técnico porfavor entre a su portal CIC Assitance para poder ver mas información sobre la nueva asignación</p><p>Cualquier duda o  inquitud puede ir al CIC o marcar al 9818119800 con extensión: 3030107<p><p>Pagina web: [cicassistance.josapino.dev]</p></div>'
      }
      const mensaje = {
          from: '"CIC Assistance 🤖" <cic.assistance2024@gmail.com>',
@@ -233,7 +238,7 @@ app.get('/panelUsuario',authPage(["Usuario","Admin","Tecnico"]), async (req, res
     const usuario = req.session.idUsuario;
     const edificios = await query('SELECT * FROM edificios');
     const historialUsuario = `
-    SELECT s.FolioSolicitud AS FolioSolicitud, s.Fecha AS Fecha, s.Equipo AS Equipo, s.Estado AS Estado, CASE WHEN v.FolioSolicitud IS NOT NULL THEN 'Disponible' ELSE 'No Disponible' END AS Vale, CASE WHEN d.FolioSolicitud IS NOT NULL THEN 'Disponible' ELSE 'No Disponible' END AS Dictamen FROM solicitudes s LEFT JOIN vales v ON s.FolioSolicitud = v.FolioSolicitud LEFT JOIN dictamenes d ON s.FolioSolicitud = d.FolioSolicitud WHERE s.IdUsuario = ${usuario} ORDER BY FolioSolicitud DESC;
+    SELECT s.FolioSolicitud AS FolioSolicitud, s.Fecha AS Fecha, s.Equipo AS Equipo, s.Estado AS Estado, CASE WHEN v.FolioSolicitud IS NOT NULL THEN 'Disponible' ELSE 'No Disponible' END AS Vale, CASE WHEN d.FolioSolicitud IS NOT NULL THEN 'Disponible' ELSE 'No Disponible' END AS Dictamen FROM solicitudes s LEFT JOIN vales v ON s.FolioSolicitud = v.FolioSolicitud LEFT JOIN dictamenes d ON s.FolioSolicitud = d.FolioSolicitud JOIN asignaciones a ON s.FolioSolicitud = a.IdSolicitud WHERE s.IdUsuario = ${usuario} ORDER BY FolioSolicitud DESC;
     `;
     const historial = await query(historialUsuario);
     res.render('panelUsuario', {
@@ -303,9 +308,8 @@ app.get('/panelAdmin',authPage('Admin'), async (req, res) => {
             conteo: conteoEstados,
             cantidadDictamenes: resultadoDictamenes,
             asignaTecnico:  asignacionesTecnicos
-            
-        });
 
+        });
 });
 function query(sql) {
     return new Promise((resolve, reject) => {
@@ -406,7 +410,7 @@ app.get('/cambiarContraseña', (req, res) => {
 });
 
 
-//HACER QUE EL FORM HABRA EN UN ARICHIVO EJS PARA PASAR PARAMS
+//HACER QUE EL FORM HABRA EN UN ARCHIVO EJS PARA PASAR PARAMS
 // Route to handle the reset token
 app.get('/reset-password/:token', async (req, res) => {
     const { token } = req.params;
@@ -427,7 +431,7 @@ app.get('/reset-password/:token', async (req, res) => {
     const usuario = await query(`SELECT IdUsuario FROM reset_password WHERE Token = "${token}"`);
     if (usuario.length > 0) {
       const actualizarPass = await query(`UPDATE usuarios SET Contrasena = "${hashPass}" WHERE IdUsuario = ${usuario[0].IdUsuario}`);
-      if(actualizarPass.length > 0){
+      if(actualizarPass.affectedRows > 0){
         await query(`DELETE FROM reset_password WHERE Token =  "${token}"`);
         // Remove the reset token after the password is updated
         res.send(`
@@ -449,6 +453,126 @@ app.get('/reset-password/:token', async (req, res) => {
       res.status(404).send('Token invalido o expirado');
     }
   });
+
+  // Encuesta de satisfacción
+app.post('/encuesta-satisfaccion', async (req, res) => {
+    const folioSolicitud = req.query.folioSolicitud;
+    const emailQuery = `SELECT u.Correo 
+                        FROM usuarios u
+                        JOIN solicitudes s ON u.IdUsuario = s.IdUsuario
+                        JOIN asignaciones a ON s.FolioSolicitud = a.IdSolicitud
+                        WHERE a.IdSolicitud = "${folioSolicitud}"`;
+
+    try {
+        const emailResult = await query(emailQuery);
+
+        if (emailResult.length > 0) {
+            const email = emailResult[0].Correo;
+            const emailVerified = await query(`SELECT * FROM usuarios WHERE Correo = '${email}'`);
+
+            if (emailVerified.length > 0) {
+                const idUsuario = emailVerified[0].IdUsuario;
+
+                // Genera el token de restablecimiento
+                const token = crypto.randomBytes(20).toString('hex');
+                const tokenExpira = new Date();
+                tokenExpira.setHours(tokenExpira.getHours() + 1);
+                const fechaHoraExpiracion = `${tokenExpira.getFullYear()}-${String(tokenExpira.getMonth() + 1).padStart(2, '0')}-${String(tokenExpira.getDate()).padStart(2, '0')} ${String(tokenExpira.getHours()).padStart(2, '0')}:${String(tokenExpira.getMinutes()).padStart(2, '0')}:${String(tokenExpira.getSeconds()).padStart(2, '0')}`;
+
+                // Almacena el token con el correo electrónico del usuario en una base de datos o en un almacenamiento en memoria
+                await query(`INSERT INTO encuesta_satisfaccion (IdUsuario, Token, FechaExpiracion) VALUES ("${idUsuario}","${token}","${fechaHoraExpiracion}")`);
+
+                // Envía el token de restablecimiento al correo electrónico del usuario
+                const transporter = nodemailer.createTransport({
+                    service: 'gmail',
+                    auth: {
+                        user: process.env.SMTP_USER,
+                        pass: process.env.SMTP_PASS
+                    },
+                });
+
+                const mailOptions = {
+                    from: '"CIC Assistance 🤖" <cic.assistance2024@gmail.com>',
+                    to: email,
+                    subject: 'Responde nuestra encuesta de satisfacción',
+                    text: `Haz click en el siguiente enlace para poder responder la encuesta de satisfacción: http://localhost:3000/responder-encuesta/${token}/${folioSolicitud}`,
+                };
+
+                transporter.sendMail(mailOptions, (error, info) => {
+                    if (error) {
+                        console.log(error);
+                        res.status(500).send('Error enviando el correo electrónico');
+                    } else {
+                        res.status(200).send('Te enviamos las instrucciones a tu correo para responder la encuesta de satisfacción');
+                    }
+                });
+            } else {
+                res.status(404).send('Email no encontrado');
+            }
+        } else {
+            res.status(404).send('Solicitud no encontrada');
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Error en el servidor');
+    }
+});
+
+
+app.get('/encuesta', (req, res) => {
+    res.render('encuesta');
+});
+
+app.get('/responder-encuesta/:token/:folioSolicitud', async (req, res) => {
+    const { token, folioSolicitud } = req.params;
+    // Check if the token exists and is still valid
+    const validarToken = await query(`SELECT * FROM encuesta_satisfaccion WHERE Token = "${token}" AND FechaExpiracion > NOW()`)
+    if (validarToken.length > 0) {
+        // Render a form for the user to enter a new password
+        res.render('encuesta', { token: token, folioSolicitud:folioSolicitud });
+    } else {
+        res.status(404).send('Invalid or expired token');
+    }
+});
+
+app.post('/responder-encuesta', async (req, res) => {
+    const { token, pregunta, folioSolicitud } = req.body;
+    console.log("Folio:",folioSolicitud);
+    console.log("Respuesta:",pregunta);
+    // Find the user with the given token and update their password
+    const usuario = await query(`SELECT IdUsuario FROM encuesta_satisfaccion WHERE Token = "${token}"`);
+    console.log("Resultado del query 'usuario':", usuario);
+    if (usuario.length > 0) {
+        const idUsuario = usuario[0].IdUsuario;
+        const actualizarEncuesta = await query(`UPDATE asignaciones SET Encuesta = "${pregunta}" WHERE IdSolicitud = "${folioSolicitud}"`);
+        console.log("Resutado del update}:",actualizarEncuesta);
+        if (actualizarEncuesta.affectedRows > 0) {
+            await query(`DELETE FROM encuesta_satisfaccion WHERE Token =  "${token}"`);
+            // Remove the reset token after the password is updated
+            res.send(`
+        <!DOCTYPE html>
+        <html lang="es">
+        <head>
+            <meta charset="UTF-8">
+            <meta http-equiv="refresh" content="5;url=/">
+            <title>Respuesta enviada</title>
+        </head>
+        <body>
+            <h1>¡La respuesta fue enviada con éxito!</h1>
+            <h2>Gracias por haber contestado la encuesta, se tomará en cuenta para mejorar nuestros servicios</h2>
+            <p>Serás redirigido a la pantalla de inicio en 5 segundos...</p>
+        </body>
+        </html>
+    `);
+        } else {
+            res.status(500).send('Error al actualizar la encuesta');
+        }
+    } else {
+        res.status(404).send('Token inválido o expirado');
+    }
+});
+
+
 
 //estadisticas
 app.post('/generarEstadisticas', (req, res, next) => {
@@ -842,7 +966,7 @@ app.post('/vales', async(req, res) => {
             console.log(error);
         } else {
             // Insertar registros en la base de datos
-            connection.query('INSERT INTO asignaciones SET ?', { IdSolicitud: folioSolicitud, IdTecnico: idTecnico,DIagnostico:"", Solucion:"", Mensaje:"" }, async(error, results)=> {
+            connection.query('INSERT INTO asignaciones SET ?', { IdSolicitud: folioSolicitud, IdTecnico: idTecnico,DIagnostico:"", Solucion:"", Encuesta:"", Mensaje:"" }, async(error, results)=> {
                 if (error) {
                     console.log(error);
                 } else {
