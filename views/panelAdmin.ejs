@@ -1405,7 +1405,7 @@
                             <td><a href="/descargarPDFdictamen?folioSolicitud=<%= variables.FolioSolicitud %>"><img src="resources/images/downloads.png" alt="Descargar Dictamen"></a></td>
                             <td>
                                 <% if (variables.Diagnostico) { %>
-                                    <a href="#" class="btn btn-diagnostico" data-toggle="modal" data-target="#exampleModalLong3" data-diagnostico="<%= variables.Diagnostico %>" data-solucion="<%= variables.Solucion %>">
+                                    <a href="#" class="btn btn-diagnostico" data-toggle="modal" data-target="#exampleModalLong3" data-diagnostico="<%= variables.Diagnostico %>" data-solucion="<%= variables.Solucion %>" data-mensaje="<%= variables.Mensaje %>">
                                         <img src="resources/images/ver.png" alt="Ojo">
                                     </a>
                                 <% } %>
@@ -1434,6 +1434,7 @@
                                         <tr>
                                             <th scope="col">Diagnóstico</th>
                                             <th scope="col">Solución aplicada</th>
+                                            <th scope="col">Comentario</th>
                                         </tr>
                                     </thead>
                                     <tbody id="diagnosticosSoluciones">
@@ -1455,6 +1456,7 @@
             $('.btn-diagnostico').click(function() {
                 var diagnostico = $(this).data('diagnostico');
                 var solucion = $(this).data('solucion');
+                var mensaje = $(this).data('mensaje');
 
                 // Limpiar tabla
                 $('#diagnosticosSoluciones').empty();
@@ -1463,6 +1465,7 @@
                 var row = $('<tr>');
                 row.append('<td>' + diagnostico + '</td>');
                 row.append('<td>' + solucion + '</td>');
+                row.append('<td>' + mensaje + '</td>');
                 $('#diagnosticosSoluciones').append(row);
             });
         });
