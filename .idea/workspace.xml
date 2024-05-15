@@ -5,13 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b75b1334-c68d-4ec7-9620-54811fca6eb8" name="Changes" comment="Estadísticas listo">
-      <change afterPath="$PROJECT_DIR$/public/images/encuesta.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/views/encuesta.ejs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_06_05_24_10_46_[Changes]/shelved.patch" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_06_05_24_10_46__Changes_.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_07_05_24_10_53_[Changes]/shelved.patch" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_07_05_24_10_53__Changes_.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_07_05_24_11_00_[Changes]/shelved.patch" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_07_05_24_11_00__Changes_.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/app.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/views/panelAdmin.ejs" beforeDir="false" afterPath="$PROJECT_DIR$/views/panelAdmin.ejs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/views/panelTecnicos.ejs" beforeDir="false" afterPath="$PROJECT_DIR$/views/panelTecnicos.ejs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/views/panelUsuario.ejs" beforeDir="false" afterPath="$PROJECT_DIR$/views/panelUsuario.ejs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -104,7 +106,14 @@
       <workItem from="1715401563391" duration="1721000" />
       <workItem from="1715535964475" duration="4879000" />
       <workItem from="1715562003986" duration="13183000" />
-      <workItem from="1715606576132" duration="5260000" />
+      <workItem from="1715606576132" duration="8583000" />
+      <workItem from="1715633176640" duration="7140000" />
+      <workItem from="1715699705903" duration="278000" />
+      <workItem from="1715710289500" duration="1144000" />
+      <workItem from="1715719760475" duration="1176000" />
+      <workItem from="1715739778555" duration="5747000" />
+      <workItem from="1715798041610" duration="6709000" />
+      <workItem from="1715809699958" duration="2225000" />
     </task>
     <task id="LOCAL-00001" summary="Estadísticas listo">
       <option name="closed" value="true" />
