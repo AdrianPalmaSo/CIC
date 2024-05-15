@@ -71,6 +71,7 @@
           <% const totalSemanal = cantidadSemanal[0].totalSolicitudes; %>
           <% const datos = conteo.map(contado => contado.total); %>
           <% const totalDictamenes = cantidadDictamenes[0].totalDictamenes; %>
+          <% const encuestasFiltradas = encuestasConteo.filter(encuesta => encuesta.Encuesta !== null && encuesta.Encuesta !== undefined); %>
             <div class="dashboardContenedor">
             <h2>Dashboard</h2>
             <div class="container-xxl flex-grow-1 container-p-y">
@@ -278,13 +279,29 @@
                 </div>
                 <!--/ Transactions -->
               </div>
+                <div class="col-12 col-lg-12 order-2 order-md-3 order-lg-2 mb-4">
+                  <div class="card h-100">
+                    <div class="card-header">
+                      <h5 class="card-title m-0 me-2">Encuestas de satisfacción</h5>
+                    </div>
+                    <div class="card-body px-0">
+                      <div class="tab-content p-0">
+                        <div class="tab-pane fade show active" id="navs-tabs-line-card-income" role="tabpanel">
+                          <canvas id="myChart3" width="30" height="30"></canvas>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
             </div>
+            <br>
             </div>
             <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
   const ctx = document.getElementById('myChart');
   const ctx2 = document.getElementById('myChart2');
+  const ctx3 = document.getElementById('myChart3');
 
   const data = {
     labels: [<% conteo.forEach(conteo => { %> '<%= conteo.estado %>', <% }); %>],
@@ -354,6 +371,44 @@
       }
     }
   });
+
+  const data3 = {
+      labels: [<% encuestasConteo.forEach(encuesta => { %> '<%= encuesta.Encuesta %>', <% }); %>],
+      datasets: [{
+        label: 'Encuestas',
+        data: [<% encuestasConteo.forEach(encuesta => { %> '<%= encuesta.totalEncuestas %>', <% }); %>], // Aquí deberías agregar tus datos para la tercera gráfica
+        backgroundColor: [
+        'rgba(255, 99, 132, 0.8)',
+        'rgba(255, 206, 86, 0.8)',
+        'rgba(75, 192, 192, 0.8)',
+        'rgba(54, 162, 235, 0.8)',
+        'rgba(0, 204, 102, 0.8)'
+        ],
+        borderColor: [
+          'rgba(255, 99, 132, 1)',
+          'rgba(255, 206, 86, 1)',
+          'rgba(75, 192, 192, 1)',
+          'rgba(54, 162, 235, 1)',
+          'rgba(0, 204, 102, 1)'
+        ],
+        borderWidth: 1
+        }]
+        };
+
+    // Configura la instancia de la tercera gráfica
+    const myChart3 = new Chart(ctx3, {
+      type: 'bar',
+      data: data3,
+      options: {
+        maintainAspectRatio: false,
+        aspectRatio: 2,
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
 </script>
         </body>
     </div>
@@ -954,6 +1009,7 @@
                             <th>Hora</th>
                             <th>Usuario</th>
                             <th>Equipo</th>
+                            <th>Descripción del problema</th>
                             <th>Estado</th>
                             <th>Vale</th>
                             <th>Dictamen</th>
@@ -966,6 +1022,11 @@
                                 <td><%= solicitud.Hora %></td>
                                 <td><%= solicitud.NombreUsuario %></td>
                                 <td><%= solicitud.Equipo%></td>
+                                <td>
+                                    <a href="#" class="btn btn-descripcion" data-toggle="modal" data-target="#exampleModalLong5" data-descripcion="<%= solicitud.Descripcion %>">
+                                        <img src="resources/images/ver.png" alt="Ojo">
+                                    </a>
+                                </td>
                                 <td class="estado-celda" data-estado="<%= solicitud.Estado %>"><%= solicitud.Estado%></td>
                                 <td><%= solicitud.Vale %></td>
                                 <td><%= solicitud.Dictamen %></td>
@@ -973,10 +1034,55 @@
                         <% }); %>
                     </table>
                 </div>
+                <!-- Modal -->
+                <div class="modal fade" id="exampleModalLong5" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle5" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle5">Problemas de los equipos</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        </div>
+                        <div class="modal-body">
+                            Enlistado de las descripciones de los equipos de las solicitudes
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                          <th scope="col">Descripción del problema</th>
+                                        </tr>
+                                      </thead>
+                                      <tbody id="descripcionesProblema">
+                                      </tbody>
+                                </table>
+                              </div>
+                        </div>
+                        <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                        </div>
+                    </div>
+                    </div>
+                </div>
         </div>
         <script src="resources/scripts/semaforo.js"></script>
-            <script src="resources/scripts/paneles.js"></script>
+        <script src="resources/scripts/paneles.js"></script>
+        <script>
+            $(document).ready(function() {
+                $('.btn-descripcion').click(function() {
+                    var descripcion = $(this).data('descripcion');
 
+                    // Limpiar tabla
+                    $('#descripcionesProblema').empty();
+
+                    // Agregar diagnóstico y solución a la tabla
+                    var row = $('<tr>');
+                    row.append('<td>' + descripcion + '</td>');
+
+                    $('#descripcionesProblema').append(row);
+                });
+            });
+        </script>
     </body>
 </div>
 
@@ -1344,7 +1450,7 @@
 <script src="resources/scripts/estadisticas.js"></script>
 </main>
 
-<!-- HISTORIAL 2----------------------------------------------------------------------------------------------- -->
+<!-- HISTORIAL GENERAL----------------------------------------------------------------------------------------------- -->
 <div id="Historial2" class="contenido-individual">
     <!-- Contenido de historial -->
 <head>
@@ -1410,7 +1516,7 @@
                                     </a>
                                 <% } %>
                             </td>
-                            <td class="estado-td" data-estado="<%= variables.Encuesta %>">
+                            <td class="estado-encuesta" data-estado="<%= variables.Encuesta %>">
                                 <%= variables.Encuesta %>
                             </td>
                         </tr>

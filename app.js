@@ -300,11 +300,11 @@ app.get('/panelAdmin',authPage('Admin'), async (req, res) => {
     const folios = await query('SELECT solicitudes.FolioSolicitud, solicitudes.IdUsuario, usuarios.Correo FROM solicitudes JOIN usuarios ON solicitudes.IdUsuario = usuarios.IdUsuario WHERE NOT EXISTS ( SELECT 1 FROM vales WHERE vales.FolioSolicitud = solicitudes.FolioSolicitud )');
     const usuarios = await query('SELECT * from usuarios');
     const usuariosTecnicos = await query('SELECT * FROM usuarios WHERE rol = "Tecnico" AND NOT EXISTS ( SELECT 1 FROM tecnicos WHERE tecnicos.IdUsuario = usuarios.IdUsuario )');
-    const historialSoli = await query(`SELECT s.FolioSolicitud AS FolioSolicitud,s.Fecha AS Fecha,s.Hora AS Hora,u.Nombre AS NombreUsuario,s.Equipo AS Equipo,s.Estado AS Estado,CASE WHEN v.FolioSolicitud IS NOT NULL THEN 'Disponible' WHEN d.FolioSolicitud IS NOT NULL THEN 'No disponible' ELSE 'No Disponible' END AS Vale,CASE WHEN d.FolioSolicitud IS NOT NULL THEN 'Disponible' ELSE 'No Disponible' END AS Dictamen FROM solicitudes s LEFT JOIN vales v ON s.FolioSolicitud = v.FolioSolicitud LEFT JOIN dictamenes d ON s.FolioSolicitud = d.FolioSolicitud LEFT JOIN usuarios u ON s.IdUsuario = u.IdUsuario ORDER BY FolioSolicitud DESC; `);
+    const historialSoli = await query(`SELECT s.FolioSolicitud AS FolioSolicitud,s.Fecha AS Fecha,s.Hora AS Hora,u.Nombre AS NombreUsuario,s.Equipo AS Equipo,s.Estado AS Estado,s.Descripcion AS Descripcion,CASE WHEN v.FolioSolicitud IS NOT NULL THEN 'Disponible' WHEN d.FolioSolicitud IS NOT NULL THEN 'No disponible' ELSE 'No Disponible' END AS Vale,CASE WHEN d.FolioSolicitud IS NOT NULL THEN 'Disponible' ELSE 'No Disponible' END AS Dictamen FROM solicitudes s LEFT JOIN vales v ON s.FolioSolicitud = v.FolioSolicitud LEFT JOIN dictamenes d ON s.FolioSolicitud = d.FolioSolicitud LEFT JOIN usuarios u ON s.IdUsuario = u.IdUsuario ORDER BY FolioSolicitud DESC; `);
     const soloAbiertas = await query('SELECT solicitudes.*, usuarios.Correo,usuarios.Nombre FROM solicitudes JOIN usuarios ON solicitudes.IdUsuario = usuarios.IdUsuario WHERE solicitudes.Estado = "Abierto"')
     const soliPendiente = await query('SELECT solicitudes.*, usuarios.Correo,usuarios.Nombre FROM solicitudes JOIN usuarios ON solicitudes.IdUsuario = usuarios.IdUsuario WHERE solicitudes.Estado = "Proceso"')
     const soliCerradas = await query('SELECT solicitudes.*, usuarios.Correo,usuarios.Nombre FROM solicitudes JOIN usuarios ON solicitudes.IdUsuario = usuarios.IdUsuario WHERE solicitudes.Estado =  "Cerrado"')
-    const resultadoConsulta = await query('SELECT COUNT(*) AS totalSolicitudes FROM solicitudes WHERE Estado = "Asignada"');    
+    const resultadoConsulta = await query('SELECT COUNT(*) AS totalSolicitudes FROM solicitudes WHERE Estado = "Asignada"');
     const resultadoSolicitudes = await query('SELECT COUNT(*) AS totalSolicitudes FROM solicitudes'); 
     const resultadoSemanal = await query(`SELECT COUNT(*) AS totalSolicitudes FROM solicitudes WHERE Fecha > '${fechaHaceUnaSemana}'`);
     const resultadoVales = await query('SELECT COUNT(*) AS totalSolicitudes FROM vales');       
@@ -313,6 +313,8 @@ app.get('/panelAdmin',authPage('Admin'), async (req, res) => {
     const inforVales = await query("SELECT v.*, COALESCE(d.idDictamen, 'No existe') AS IdDictamen, u.Nombre AS NombreUsuario, COALESCE(a.Diagnostico, 'No disponible') AS Diagnostico, COALESCE(a.Solucion, 'No disponible') AS Solucion, COALESCE(a.Encuesta, 'No disponible') AS Encuesta, COALESCE(a.Mensaje, 'No disponible') AS Mensaje FROM vales v LEFT JOIN dictamenes d ON v.idVale = d.idVale LEFT JOIN solicitudes s ON v.folioSolicitud = s.FolioSolicitud LEFT JOIN usuarios u ON s.IdUsuario = u.IdUsuario LEFT JOIN asignaciones a ON s.FolioSolicitud = a.IdSolicitud ORDER BY v.idVale DESC;");
     const resultadoDictamenes = await query('SELECT COUNT(*)  AS totalDictamenes FROM dictamenes;')
     const asignacionesTecnicos = await query('SELECT t.IdTecnico,t.Nombre AS NombreTecnico,t.Correo AS CorreoTecnico,COUNT(a.IdAsignacion) AS CantidadAsignaciones FROM tecnicos t INNER JOIN asignaciones a ON t.IdTecnico = a.IdTecnico GROUP BY t.IdTecnico, t.Nombre;')
+
+    const encuestasConteo = await query("SELECT COALESCE(Encuesta, 'Sin responder') AS Encuesta, COUNT(*) AS totalEncuestas FROM asignaciones WHERE Encuesta IN ('Excelente', 'Regular', 'Buena', 'Mala') GROUP BY Encuesta");
 
     res.render('panelAdmin', {
             login: req.session.loggedin,
@@ -335,7 +337,8 @@ app.get('/panelAdmin',authPage('Admin'), async (req, res) => {
             cantidadSemanal: resultadoSemanal,
             conteo: conteoEstados,
             cantidadDictamenes: resultadoDictamenes,
-            asignaTecnico:  asignacionesTecnicos
+            asignaTecnico:  asignacionesTecnicos,
+            encuestasConteo: encuestasConteo
 
         });
 });
@@ -417,6 +420,7 @@ app.post('/forgot-password', async (req, res) => {
          from: '"CIC Assistance 🤖" <cic.assistance2024@gmail.com>',
          to: email,
          subject: 'Crear nueva contraseña',
+           // text: `Haz click en el siguiente enlace para poder crear una nueva contraseña: http://cicassistance.josapino.dev/reset-password/${token}`,
          text: `Haz click en el siguiente enlace para poder crear una nueva contraseña: http://localhost:3000/reset-password/${token}`,
        };
        transporter.sendMail(mailOptions, (error, info) => {
@@ -550,6 +554,7 @@ app.post('/encuesta-satisfaccion', async (req, res) => {
                     from: '"CIC Assistance 🤖" <cic.assistance2024@gmail.com>',
                     to: email,
                     subject: 'Responde nuestra encuesta de satisfacción',
+                    // text: `Haz click en el siguiente enlace para poder responder la encuesta de satisfacción: http://cicassistance.josapino.dev/responder-encuesta/${token}/${folioSolicitud}`,
                     text: `Haz click en el siguiente enlace para poder responder la encuesta de satisfacción: http://localhost:3000/responder-encuesta/${token}/${folioSolicitud}`,
                 };
 
@@ -558,7 +563,15 @@ app.post('/encuesta-satisfaccion', async (req, res) => {
                         console.log(error);
                         res.status(500).send('Error enviando el correo electrónico');
                     } else {
-                        res.status(200).send('Te enviamos las instrucciones a tu correo para responder la encuesta de satisfacción');
+                        res.render('alerta', {
+                            alert: true,
+                            alertTitle: 'Éxito',
+                            alertMessage: 'Te enviamos las instrucciones a tu correo para responder la encuesta de satisfacción',
+                            alertIcon: 'success',
+                            showConfirmButton: false,
+                            timer: 2000,
+                            ruta: 'login'
+                        });
                     }
                 });
             } else {
@@ -592,15 +605,14 @@ app.get('/responder-encuesta/:token/:folioSolicitud', async (req, res) => {
 
 app.post('/responder-encuesta', async (req, res) => {
     const { token, pregunta, folioSolicitud } = req.body;
-    console.log("Folio:",folioSolicitud);
-    console.log("Respuesta:",pregunta);
+
     // Find the user with the given token and update their password
     const usuario = await query(`SELECT IdUsuario FROM encuesta_satisfaccion WHERE Token = "${token}"`);
-    console.log("Resultado del query 'usuario':", usuario);
+
     if (usuario.length > 0) {
         const idUsuario = usuario[0].IdUsuario;
         const actualizarEncuesta = await query(`UPDATE asignaciones SET Encuesta = "${pregunta}" WHERE IdSolicitud = "${folioSolicitud}"`);
-        console.log("Resutado del update}:",actualizarEncuesta);
+
         if (actualizarEncuesta.affectedRows > 0) {
             await query(`DELETE FROM encuesta_satisfaccion WHERE Token =  "${token}"`);
             // Remove the reset token after the password is updated

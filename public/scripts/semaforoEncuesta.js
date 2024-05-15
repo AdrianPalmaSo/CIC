@@ -1,7 +1,7 @@
 
 document.addEventListener('DOMContentLoaded', function() {
     // Obtén todas las celdas con la clase 'estado-celda'
-    var celdas = document.querySelectorAll('.estado-td');
+    var celdas = document.querySelectorAll('.estado-encuesta');
 
     // Itera sobre cada celda
     celdas.forEach(function(celda) {
