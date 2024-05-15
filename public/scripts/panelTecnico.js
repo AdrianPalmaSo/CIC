@@ -10,6 +10,29 @@ document.addEventListener("DOMContentLoaded", function () {
             seleccionarFolioEnDiagnostico(folioSolicitud);
         });
     });
+
+    //Deshabilitar botones si el estado esta en cerrado
+    const rows = document.querySelectorAll('tr');
+
+    rows.forEach(row => {
+        const estadoCell = row.querySelector('.estado-celda');
+        if (estadoCell && estadoCell.getAttribute('data-estado') === 'Cerrado') {
+            const estadoSelect = row.querySelector('#estadoSelect');
+            const redireccionButton = row.querySelector('button[data-redireccion]');
+
+            if (estadoSelect) {
+                estadoSelect.disabled = true;
+                estadoSelect.style.backgroundColor = 'rgba(128, 128, 128, 0.5)';
+                estadoSelect.style.color = 'white';
+            }
+
+            if (redireccionButton) {
+                redireccionButton.disabled = true;
+                redireccionButton.style.backgroundColor = 'gray';
+                redireccionButton.style.borderColor = 'gray';
+            }
+        }
+    });
 });
 
 function mostrarContenido(id) {

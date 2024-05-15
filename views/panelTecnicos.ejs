@@ -75,6 +75,7 @@
                                 <th>Serie</th>
                                 <th>Marca</th>
                                 <th>Estado</th>
+                                <th>Estado de la solicitud</th>
                                 <th>Generar diagnóstico</th>
                                 <th>Encuesta de satisfacción</th>
                             </thead>
@@ -95,6 +96,7 @@
                                             <option value="Proceso">En proceso</option>
                                         </select>
                                     </td>
+                                    <td class="estado-celda" data-estado="<%= asignacion.Estado %>"><%= asignacion.Estado%></td>
                                     <td><button class="btn btn-primary" data-redireccion data-folio="<%= asignacion.FolioSolicitud %>">Redireccionar</button></td>
                                     <td class="estado-td" data-estado="<%= asignacion.Encuesta %>">
                                         <%= asignacion.Encuesta %>
@@ -213,10 +215,9 @@
 
 </main>
 
-<script src="resources/scripts/panelTecnico.js"></script>
-
 <!-- SCRIPTS PARA GENERAR LOS FILTROS FUNCIONALES ------------------------------------------------------------------------->
 <script src="resources/scripts/panelTecnico.js"></script>
+<script src="resources/scripts/semaforo.js"></script>
 
 <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
@@ -231,11 +232,12 @@
 new DataTable('#TablaHistorialAsignaciones', {
     language: {
         info: 'Mostrando _PAGE_ de _PAGES_ paginas',
-        infoEmpty: 'No records available',
+        infoEmpty: 'No existe ninguna entrada',
         lengthMenu: '_MENU_ Entradas por pagina',
         zeroRecords: 'No se encontro - Lo siento',
         search: "Buscar:"
-    }
+    },
+    order: [[9, 'asc']] // Cambia 0 al índice de la columna que deseas usar para ordenar y 'asc' o 'desc' para el orden ascendente o descendente
     });
 </script>
 

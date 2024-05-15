@@ -208,7 +208,34 @@ app.get('/panelTecnicos', authPage(["Tecnico", "Admin"]), async (req, res) => {
 
     try {
         const usuario = req.session.idUsuario;
-        const asignaciones = await query(`SELECT DISTINCT s.FolioSolicitud,s.Fecha,s.Descripcion, v.Equipo,v.NoSerieEquipo,v.MarcaEquipo,v.ModeloEquipo, u.IdUsuario as IdUsuarioTecnico, us.IdUsuario as IdUsuarioSolicitante, us.Nombre as NombreSolicitante, COALESCE(a.Encuesta, 'No disponible') AS Encuesta FROM solicitudes s JOIN vales v ON s.FolioSolicitud = v.FolioSolicitud JOIN asignaciones a ON s.FolioSolicitud = a.IdSolicitud JOIN tecnicos t ON a.IdTecnico = t.IdTecnico JOIN usuarios u ON t.IdUsuario = u.IdUsuario JOIN usuarios us ON s.IdUsuario = us.IdUsuario WHERE u.IdUsuario = ${usuario}`);
+        const asignaciones = await query(`SELECT DISTINCT 
+        s.FolioSolicitud,
+        s.Fecha,
+        s.Descripcion,
+        s.Estado,
+        v.Equipo,
+        v.NoSerieEquipo,
+        v.MarcaEquipo,
+        v.ModeloEquipo,
+        u.IdUsuario as IdUsuarioTecnico,
+        us.IdUsuario as IdUsuarioSolicitante,
+        us.Nombre as NombreSolicitante,
+        COALESCE(a.Encuesta, 'No disponible') AS Encuesta 
+        FROM 
+            solicitudes s 
+        JOIN 
+            vales v ON s.FolioSolicitud = v.FolioSolicitud 
+        JOIN 
+            asignaciones a ON s.FolioSolicitud = a.IdSolicitud 
+        JOIN 
+            tecnicos t ON a.IdTecnico = t.IdTecnico 
+        JOIN 
+            usuarios u ON t.IdUsuario = u.IdUsuario 
+        JOIN 
+            usuarios us ON s.IdUsuario = us.IdUsuario 
+        WHERE 
+            u.IdUsuario = ${usuario}
+        `);
         
         res.render('panelTecnicos', {
             login: req.session.loggedin,
@@ -1324,7 +1351,10 @@ app.post('/crearDiagnostico', async (req, res) => {
     const solucion = req.body.solucion;
 
     // Consulta para obtener el IdTecnico de la tabla asignaciones
-    connection.query('SELECT IdTecnico FROM asignaciones WHERE IdSolicitud = ?', [folioSeleccionado], (error, results) => {
+    connection.query(`UPDATE asignaciones a
+        JOIN solicitudes s ON a.IdSolicitud = s.FolioSolicitud
+        SET a.Diagnostico = ?, a.Solucion = ?, s.Estado = 'Cerrado'
+        WHERE a.IdSolicitud = ?;`, [folioSeleccionado], (error, results) => {
         if (error) {
             console.error('Error al obtener el IdTecnico:', error);
             // Mostrar un mensaje de error utilizando SweetAlert2
