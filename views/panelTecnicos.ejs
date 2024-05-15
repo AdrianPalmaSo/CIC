@@ -113,7 +113,6 @@
                     <button type="button" class="btn btn-outline-dark" id="guardarCambios">Guardar cambios</button>
                 </div>
             </div>
-            <script src="resources/scripts/semaforo.js"></script>
             <script src="resources/scripts/cambiarEstadoAsignacion.js"></script>
             <script src="resources/scripts/semaforoEncuesta.js"></script>
 
@@ -167,10 +166,8 @@
                         <div class="enviarDiagnostico">
                             <button type="submit" class="btn btn-outline-dark" id="enviarDiagnostico" value="Submit" onclick="setAction('crearDiagnostico')">Cerrar diagnóstico</button>
                         </div>
-
                     </form>     
             </div>
-
             <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>  <!-- Obtenido de sweetAlert2  -->
         <!--Tenemos que llamar la estructura para usar el mensaje AlertSweet en EJS llamando los parametros establecidos en APPJS-->
         <% if(typeof alert != "undefined"){ %>
@@ -188,7 +185,7 @@
                 });
             </script>
             <% } %>
-
+            
         </body>
     </div>  
 

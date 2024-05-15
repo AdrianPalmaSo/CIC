@@ -220,10 +220,7 @@ app.get('/panelTecnicos', authPage(["Tecnico", "Admin"]), async (req, res) => {
         u.IdUsuario as IdUsuarioTecnico,
         us.IdUsuario as IdUsuarioSolicitante,
         us.Nombre as NombreSolicitante,
-        COALESCE(a.Encuesta, 'No disponible') AS Encuesta,
-        a.DIagnostico AS Diagnostico,
-        a.Solucion,
-        a.Mensaje
+        COALESCE(a.Encuesta, 'No disponible') AS Encuesta 
         FROM 
             solicitudes s 
         JOIN 
@@ -431,15 +428,7 @@ app.post('/forgot-password', async (req, res) => {
            console.log(error);
            res.status(500).send('Error enviando el email');
          } else {
-             res.render('alerta', {
-                 alert: true,
-                 alertTitle: 'Cambio de contraseña',
-                 alertMessage: 'Te enviamos las instrucciones a tu correo para cambiar la contraseña de tu cuenta',
-                 alertIcon: 'success',
-                 showConfirmButton: false,
-                 timer: 2000,
-                 ruta: 'login'
-             });
+           res.status(200).send('Te enviamos las instrucciones a tu correo para cambiar la contraseña de tu cuenta');
          }
        });
      } else {
