@@ -1351,10 +1351,7 @@ app.post('/crearDiagnostico', async (req, res) => {
     const solucion = req.body.solucion;
 
     // Consulta para obtener el IdTecnico de la tabla asignaciones
-    connection.query(`UPDATE asignaciones a
-        JOIN solicitudes s ON a.IdSolicitud = s.FolioSolicitud
-        SET a.Diagnostico = ?, a.Solucion = ?, s.Estado = 'Cerrado'
-        WHERE a.IdSolicitud = ?;`, [folioSeleccionado], (error, results) => {
+    connection.query('SELECT IdTecnico FROM asignaciones WHERE IdSolicitud = ?', [folioSeleccionado], (error, results) => {
         if (error) {
             console.error('Error al obtener el IdTecnico:', error);
             // Mostrar un mensaje de error utilizando SweetAlert2
@@ -1372,7 +1369,10 @@ app.post('/crearDiagnostico', async (req, res) => {
             const idTecnico = results[0].IdTecnico; // Se obtiene el IdTecnico de los resultados de la consulta
 
             // Inserción del diagnóstico y solución en la tabla asignaciones
-            connection.query('UPDATE asignaciones SET Diagnostico = ?, Solucion = ? WHERE IdSolicitud = ?',
+            connection.query(`UPDATE asignaciones a
+                JOIN solicitudes s ON a.IdSolicitud = s.FolioSolicitud
+                SET a.Diagnostico = ?, a.Solucion = ?, s.Estado = 'Cerrado'
+                WHERE a.IdSolicitud = ?;`,
                 [diagnosticoT, solucion, folioSeleccionado], (error, results) => {
                     if (error) {
                         console.error('Error al actualizar la tabla de asignaciones:', error);
