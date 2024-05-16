@@ -936,6 +936,27 @@ app.post('/solicitudAdmin',authPage('Admin'), async(req, res) => {
     }
 });
 
+app.get('/filtroFechaSolicitudes', async (req, res) => {
+    const { desdeFecha, hastaFecha } = req.query;
+
+    try {
+        // Realizar la consulta SQL para obtener las solicitudes entre las fechas especificadas
+        const query = 'SELECT * FROM solicitudes WHERE Fecha BETWEEN ? AND ?';
+        connection.query(query, [desdeFecha, hastaFecha], (error, results) => {
+            if (error) {
+                console.error('Error al obtener las solicitudes filtradas por fechas:', error);
+                res.status(500).json({ error: 'Error al obtener las solicitudes filtradas por fechas' });
+                return;
+            }
+            // Enviar los resultados en formato JSON
+            res.json(results);
+        });
+    } catch (error) {
+        console.error('Error al ejecutar la consulta SQL:', error);
+        res.status(500).json({ error: 'Error al ejecutar la consulta SQL' });
+    }
+});
+
 //11 Autenticacion
 app.post('/auth', async (req,res)=> {
     const user = req.body.username;
