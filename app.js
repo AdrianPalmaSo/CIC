@@ -941,8 +941,18 @@ app.get('/filtroFechaSolicitudes', async (req, res) => {
 
     try {
         // Realizar la consulta SQL para obtener las solicitudes entre las fechas especificadas
-        const query = 'SELECT * FROM solicitudes WHERE Fecha BETWEEN ? AND ?';
-        connection.query(query, [desdeFecha, hastaFecha], (error, results) => {
+        const queryFiltro = `
+            SELECT s.FolioSolicitud, s.Fecha, s.Hora, u.Nombre AS NombreUsuario, s.Equipo, s.Estado, s.Descripcion, 
+            CASE WHEN v.FolioSolicitud IS NOT NULL THEN 'Disponible' ELSE 'No Disponible' END AS Vale, 
+            CASE WHEN d.FolioSolicitud IS NOT NULL THEN 'Disponible' ELSE 'No Disponible' END AS Dictamen 
+            FROM solicitudes s 
+            LEFT JOIN vales v ON s.FolioSolicitud = v.FolioSolicitud 
+            LEFT JOIN dictamenes d ON s.FolioSolicitud = d.FolioSolicitud 
+            LEFT JOIN usuarios u ON s.IdUsuario = u.IdUsuario 
+            WHERE s.Fecha BETWEEN '${desdeFecha}' AND '${hastaFecha}'
+        `;
+
+        connection.query(queryFiltro, (error, results) => {
             if (error) {
                 console.error('Error al obtener las solicitudes filtradas por fechas:', error);
                 res.status(500).json({ error: 'Error al obtener las solicitudes filtradas por fechas' });
