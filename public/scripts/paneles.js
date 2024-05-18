@@ -58,8 +58,8 @@ document.getElementById('filtroForm').addEventListener('submit', async function(
                 <td>${solicitud.Hora}</td>
                 <td>${solicitud.NombreUsuario}</td>
                 <td>${solicitud.Equipo}</td>
-                <td class="estado-celda" data-estado="${solicitud.Estado}">${solicitud.Estado}</td>
                 <td>${solicitud.Descripcion}</td>
+                <td class="estado-celda" data-estado="${solicitud.Estado}">${solicitud.Estado}</td>
                 <td>${solicitud.Vale}</td>
                 <td>${solicitud.Dictamen}</td>
             `;
