@@ -37,3 +37,38 @@ function validar() {
         return true;
     }
 }
+function validarActualizacion() {
+    var tel = document.getElementById("tecnicoTelefono").value;
+    const correo = document.getElementById("tecnicoCorreo").value;
+    // Verificar longitud mínima de 8 caracteres
+    if (tel.length != 10) {
+        alert("El numero telefonico debe tener 10 digitos");
+        return false;
+    }
+
+    var espacios = false;
+    var cont = 0;
+
+    while (!espacios && (cont < tel.length)) {
+        if (tel.charAt(cont) == " ")
+            espacios = true;
+        cont++;
+    }
+
+    if (espacios) {
+        alert("El numero telefonico no puede contener espacios en blanco");
+        return false;
+    }
+
+
+     // Verificar si el correo tiene el dominio "@uacam.mx"
+     const dominio = "@uacam.mx";
+     const dominioValido = correo.endsWith(dominio);
+     if (!dominioValido) {
+         alert("El correo electrónico debe ser de la Universidad Autónoma de Campeche (uacam.mx)");
+         return false;
+     }
+    else {
+        return true;
+    }
+}

@@ -128,6 +128,9 @@ app.get('/generarDictamen',authPage('Admin'), (req, res) => {
 app.get('/alerta', (req, res) => {
     res.render('alerta');
 });
+app.get('/alert2', (req, res) => {
+    res.render('alert2');
+});
 // Ruta GET para renderizar la vista de estadísticas ESTADISTICAS
 app.get('/estadisticas', async (req, res) => {
     const { tipo, desdeFecha, hastaFecha } = req.session.estadisticas || {};
@@ -251,6 +254,19 @@ app.get('/panelTecnicos', authPage(["Tecnico", "Admin"]), async (req, res) => {
     }
 });
 
+
+app.get('/getTecnicoById/:id', async (req, res) => {
+    const tecnicoId = parseInt(req.params.id, 10);
+    const tecnico = await query(`SELECT * FROM tecnicos WHERE IdTecnico =  '${tecnicoId}'`);
+    console.log(tecnico[0]);
+    if (tecnico) {
+        res.json(tecnico[0]);
+    } else {
+        res.status(404).json({ message: 'Técnico no encontrado' });
+    }
+});
+
+
 // Panel de usuarios
 app.get('/panelUsuario',authPage(["Usuario","Admin","Tecnico"]), async (req, res) => {
 
@@ -280,6 +296,16 @@ app.get('/panelUsuario',authPage(["Usuario","Admin","Tecnico"]), async (req, res
     });
 });
 
+app.get('/getUsuarioById/:id', async (req, res) => {
+    const usuarioId = parseInt(req.params.id, 10);
+    const usuario = await query(`SELECT * FROM usuarios WHERE IdUsuario =  '${usuarioId}'`);
+    console.log(usuario[0]);
+    if (usuario) {
+        res.json(usuario[0]);
+    } else {
+        res.status(404).json({ message: 'Usuario no encontrado' });
+    }
+});
 
 //Panel de administradores
 app.get('/panelAdmin',authPage('Admin'), async (req, res) => {
@@ -394,6 +420,70 @@ app.get('/obtener-informacion-folio/:folioSolicitud',authPage('Admin'), (req, re
     });
 });
 
+
+app.post('/actualizarTecnico' , async (req, res) =>{
+    const nombre = req.body.tecnicoNombre;
+    const idTec =  req.body.tecId;
+    const numeroTrabajador = req.body.tecnicoNumero;
+    const correo = req.body.tecnicoCorreo;
+    const telefono = req.body.tecnicoTelefono;
+console.log(req.body)
+    try {
+        // Realizar la consulta SQL de actualización
+        const result = await query(`UPDATE tecnicos 
+                                    SET Nombre = '${nombre}', NoTrabajador = '${numeroTrabajador}', Correo = '${correo}', Telefono = '${telefono}'
+                                    WHERE IdTecnico = '${idTec}'`);
+        // Verificar si se actualizó correctamente
+        if (result.affectedRows > 0) {
+            res.render('alerta', {
+                alert: true,
+                alertTitle: "Actualización",
+                alertMessage: "¡Actualización exitosa!",
+                alertIcon: "success",
+                showConfirmButton: false,
+                timer: 1500,
+                ruta: 'panelAdmin'
+            });
+        } else {
+            res.status(404).send('Tecnico no encontrado');
+        }
+    } catch (error) {
+        console.error('Error al actualizar técnico:', error);
+        
+    }
+});
+
+
+app.post('/actualizarUsuario' , async (req, res) =>{
+    const usuario = req.body.usuarioNombre;
+    const id =  req.body.usuarioIdSecreto;
+    const nombre = req.body.userNombre;
+    const correo = req.body.usuarioCor;
+console.log(req.body)
+    try {
+        // Realizar la consulta SQL de actualización
+        const result = await query(`UPDATE usuarios 
+                                    SET NombreUsuario = '${usuario}', Nombre = '${nombre}', Correo = '${correo}'
+                                    WHERE IdUsuario = '${id}'`);
+        // Verificar si se actualizó correctamente
+        if (result.affectedRows > 0) {
+            res.render('alerta', {
+                alert: true,
+                alertTitle: "Actualización",
+                alertMessage: "¡Actualización exitosa!",
+                alertIcon: "success",
+                showConfirmButton: false,
+                timer: 1500,
+                ruta: 'panelAdmin'
+            });
+        } else {
+            res.status(404).send('Usuario no encontrado');
+        }
+    } catch (error) {
+        console.error('Error al actualizar usuario:', error);
+        
+    }
+});
 
 //------------------CAMBIAR EL LINK AL SUBIR AL SERVIDOR--------------------------------
 //-----------------------------------------------------------------------------------------------------

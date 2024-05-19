@@ -1175,55 +1175,109 @@
                     <input type="submit" value="Registrar" class="btn btn-outline-dark" onclick="validar()">
                 </div>
             </form>
-            <!-- Button trigger modal -->
-            <button type="button" class="btn btn-outline-dark" data-toggle="modal" data-target="#exampleModalLong">
+
+
+            <div id="listaUsuarios" class="w-95" style="display:none;">
+                <h5>Usuarios Registrados</h5>
+                <div class="table-responsive" style="max-height: 45em;">
+                    <table class="table overflow-auto">
+                        <thead>
+                            <tr>
+                                <th scope="col">Usuario</th>
+                                <th scope="col">Nombre</th>
+                                <th scope="col">Rol</th>
+                                <th scope="col">Genero</th>
+                                <th scope="col">Correo</th>
+                                <th scope="col">Editar</th>
+                              </tr>
+                        </thead>
+                        <tbody>
+                            <% usuarios.forEach(usuario => { %>
+                            <tr>
+                                <td><%= usuario.NombreUsuario %></td>
+                                <td><%= usuario.Nombre%></td>
+                                <td><%= usuario.Rol %></td>
+                                <td><%= usuario.Genero %></td>
+                                <td><%= usuario.Correo%></td>
+                                <td><button type="button" class="btn btn-edit" data-bs-toggle="modal" data-id="<%= usuario.IdUsuario %>" data-bs-target="#exampleModalUsuarios"><i class="bi bi-pencil-square"></i></button></td>
+                            </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- Button trigger div list -->
+            <button type="button" class="btn btn-outline-dark" id="showUsersBtn">
                 Ver listado de usuarios registrados
             </button>
             <br>
             <!-- Modal -->
-            <div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                <div class="modal-content">
+            <div class="modal fade" id="exampleModalUsuarios" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-scrollable">
+                  <div class="modal-content">
                     <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLongTitle">Usuarios</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                      <h5 class="modal-title" id="exampleModalLabel">Editar usuario</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        Enlistado de todos los usuarios registrados en CIC Assistance
-                        <div class="table-responsive">
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                      <th scope="col">Id</th>
-                                      <th scope="col">Nombre</th>
-                                      <th scope="col">Rol</th>
-                                      <th scope="col">Correo</th>
-                                    </tr>
-                                  </thead>
-                                  <tbody>
-                                    <% usuarios.forEach(usuario => { %>
-                                    <tr>
-                                      <td><%= usuario.IdUsuario %></td>
-                                      <td><%= usuario.Nombre%></td>
-                                      <td><%= usuario.Rol %></td>
-                                      <td><%= usuario.Correo%></td>
-                                    </tr>
-                                    <% }); %>
-                                  </tbody>
-                            </table>
+                      <form method="POST" action="/actualizarUsuario" onsubmit="return validarActualizacionUsuario();">
+                        <div class="row gx-3 mb-3 ">
+                            <div class="col-md-6">
+                                <label for="usuarioNombre" class="col-form-label">Usuario:</label>
+                                <input type="text" class="form-control" id="usuarioNombre" name="usuarioNombre">
+                            </div>
+                            <input type="hidden" class="form-control" id="usuarioIdSecreto" name="usuarioIdSecreto">
+                            <div class="col-md-6">
+                                <label for="userNombre" class="col-form-label">Nombre:</label>
+                                <input type="text" class="form-control" id="userNombre" name="userNombre">
+                            </div>
+                        </div>
+                        <div class="row gx-3 mb-3 ">
+                          <div class="col-md-6">
+                            <label for="usuarioCor" class="col-form-label">Correo:</label>
+                            <input type="text" class="form-control" id="usuarioCor" name="usuarioCor">
                           </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary" onclick="validarActualizacionUsuario()">Guardar</button>
+                      </form>
                     </div>
                     <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     </div>
-                </div>
+                  </div>
                 </div>
             </div>
+
         </div>
         <script src="resources/scripts/validacion.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>  <!-- Obtenido de sweetAlert2  -->
+        <script>
+            document.getElementById('showUsersBtn').addEventListener('click', function() {
+                const techListDiv = document.getElementById('listaUsuarios');
+                if (techListDiv.style.display === 'none') {
+                    techListDiv.style.display = 'block';
+                } else {
+                    techListDiv.style.display = 'none';
+                }
+            });
+        
+            document.querySelectorAll('.btn-edit').forEach(button => {
+            button.addEventListener('click', function() {
+                const usuarioId = this.getAttribute('data-id');
+                console.log("Fetching data for usuario ID:", usuarioId);
+                // Hacer una solicitud AJAX para obtener la información del técnico por ID
+                fetch(`/getUsuarioById/${usuarioId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        document.getElementById('usuarioNombre').value = data.NombreUsuario;
+                        document.getElementById('usuarioIdSecreto').value = data.IdUsuario;
+                        document.getElementById('userNombre').value = data.Nombre;
+                        document.getElementById('usuarioCor').value = data.Correo;
+                    })
+                    .catch(error => console.error('Error:', error));
+                });
+            });
+        </script>
         <!--Tenemos que llamar la estructura para usar el mensaje AlertSweet en EJS llamando los parametros establecidos en APPJS-->
         <% if(typeof alert != "undefined"){ %>
         <script>
@@ -1286,53 +1340,114 @@
             <input type="submit" value="Registrar" class="btn btn-outline-dark">
         </div>
     </form>
-    <!-- Button trigger modal -->
-    <button type="button" class="btn btn-outline-dark" data-toggle="modal" data-target="#exampleModalLong2">
+
+    <div id="techniciansList" class="w-75" style="display:none;">
+        <h5>Técnicos Registrados</h5>
+        <div class="table-responsive" style="max-height: 45em;">
+            <table class="table overflow-auto">
+                <thead>
+                    <tr>
+                        <th scope="col">Id técnico</th>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">No.Trabajador</th>
+                        <th scope="col">Correo</th>
+                        <th scope="col">Editar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% tecnicos.forEach(tecnico => { %>
+                    <tr>
+                        <td><%= tecnico.IdTecnico %></td>
+                        <td><%= tecnico.Nombre%></td>
+                        <td><%= tecnico.NoTrabajador %></td>
+                        <td><%= tecnico.Correo%></td>
+                        <td><button type="button" class="btn btn-edit" data-bs-toggle="modal" data-id="<%= tecnico.IdTecnico %>" data-bs-target="#exampleModal"><i class="bi bi-pencil-square"></i></button></td>
+                    </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <button type="button" class="btn btn-outline-dark" id="showTechniciansBtn">
         Ver listado de técnicos registrados
     </button>
     <br>
-    <!-- Modal -->
-    <div class="modal fade" id="exampleModalLong2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle2" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-        <div class="modal-content">
+    <!-- Div Mostrar tecnicos-->
+    
+
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable">
+          <div class="modal-content">
             <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLongTitle2">Técnicos</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
+              <h5 class="modal-title" id="exampleModalLabel">Editar técnico</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                Enlistado de todos los técnicos registrados en CIC Assistance
-                <div class="table-responsive">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                              <th scope="col">Id técnico</th>
-                              <th scope="col">Nombre</th>
-                              <th scope="col">Apellidos</th>
-                              <th scope="col">Correo</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <% tecnicos.forEach(tecnico => { %>
-                            <tr>
-                              <td><%= tecnico.IdTecnico %></td>
-                              <td><%= tecnico.Nombre%></td>
-                              <td><%= tecnico.Apellidos %></td>
-                              <td><%= tecnico.Correo%></td>
-                            </tr>
-                            <% }); %>
-                          </tbody>
-                    </table>
+              <form method="POST" action="/actualizarTecnico" onsubmit="return validarActualizacion();">
+                <div class="row gx-3 mb-3 ">
+                    <div class="col-md-6">
+                        <label for="tecnicoNombre" class="col-form-label">Nombre:</label>
+                        <input type="text" class="form-control" id="tecnicoNombre" name="tecnicoNombre">
+                    </div>
+                    <input type="hidden" class="form-control" id="tecId" name="tecId">
+                    <div class="col-md-6">
+                        <label for="tecnicoNumero" class="col-form-label">No. Trabajador:</label>
+                        <input type="text" class="form-control" id="tecnicoNumero" name="tecnicoNumero">
+                    </div>
+                </div>
+                <div class="row gx-3 mb-3 ">
+                  <div class="col-md-6">
+                    <label for="tecnicoCorreo" class="col-form-label">Correo:</label>
+                    <input type="text" class="form-control" id="tecnicoCorreo" name="tecnicoCorreo">
                   </div>
+                  <div class="col-md-6">
+                    <label for="tecnicoTelefono" class="col-form-label">Teléfono:</label>
+                    <input type="text" class="form-control" id="tecnicoTelefono" name="tecnicoTelefono">
+                  </div>
+                </div>
+                <button type="submit" class="btn btn-primary" onclick="validarActualizacion()">Guardar</button>
+              </form>
             </div>
             <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
-        </div>
+          </div>
         </div>
     </div>
+
+</div> 
 </div>
+<script src="resources/scripts/validacion.js"></script>
+<script>
+    document.getElementById('showTechniciansBtn').addEventListener('click', function() {
+        const techListDiv = document.getElementById('techniciansList');
+        if (techListDiv.style.display === 'none') {
+            techListDiv.style.display = 'block';
+        } else {
+            techListDiv.style.display = 'none';
+        }
+    });
+
+    document.querySelectorAll('.btn-edit').forEach(button => {
+    button.addEventListener('click', function() {
+        const tecnicoId = this.getAttribute('data-id');
+        console.log("Fetching data for tecnico ID:", tecnicoId);
+        // Hacer una solicitud AJAX para obtener la información del técnico por ID
+        fetch(`/getTecnicoById/${tecnicoId}`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('tecnicoNombre').value = data.Nombre;
+                document.getElementById('tecId').value = data.IdTecnico;
+              //  document.getElementById('tecnicoApellido').value = data.Apellidos;
+                document.getElementById('tecnicoNumero').value = data.NoTrabajador;
+                document.getElementById('tecnicoCorreo').value = data.Correo;
+                document.getElementById('tecnicoTelefono').value = data.Telefono;
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    });
+</script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>  <!-- Obtenido de sweetAlert2  -->
 <!--Tenemos que llamar la estructura para usar el mensaje AlertSweet en EJS llamando los parametros establecidos en APPJS-->
 <% if(typeof alert != "undefined"){ %>
