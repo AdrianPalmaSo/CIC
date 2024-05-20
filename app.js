@@ -1061,6 +1061,81 @@ app.get('/filtroFechaSolicitudes', async (req, res) => {
     }
 });
 
+app.post('/filtroFechaEstatus', (req, res) => {
+    const { desdeFecha, hastaFecha } = req.body;
+
+    const queries = [
+        {
+            name: 'abierto',
+            query: `
+                SELECT solicitudes.*, usuarios.Correo, usuarios.Nombre
+                FROM solicitudes
+                JOIN usuarios ON solicitudes.IdUsuario = usuarios.IdUsuario
+                WHERE solicitudes.Estado = "Abierto" AND solicitudes.Fecha BETWEEN ? AND ?
+            `
+        },
+        {
+            name: 'pendiente',
+            query: `
+                SELECT solicitudes.*, usuarios.Correo, usuarios.Nombre
+                FROM solicitudes
+                JOIN usuarios ON solicitudes.IdUsuario = usuarios.IdUsuario
+                WHERE solicitudes.Estado = "Proceso" AND solicitudes.Fecha BETWEEN ? AND ?
+            `
+        },
+        {
+            name: 'cerrado',
+            query: `
+                SELECT solicitudes.*, usuarios.Correo, usuarios.Nombre
+                FROM solicitudes
+                JOIN usuarios ON solicitudes.IdUsuario = usuarios.IdUsuario
+                WHERE solicitudes.Estado = "Cerrado" AND solicitudes.Fecha BETWEEN ? AND ?
+            `
+        },
+        {
+            name: 'espera',
+            query: `
+                SELECT solicitudes.*, usuarios.Correo, usuarios.Nombre
+                FROM solicitudes
+                JOIN usuarios ON solicitudes.IdUsuario = usuarios.IdUsuario
+                WHERE solicitudes.Estado = "Espera" AND solicitudes.Fecha BETWEEN ? AND ?
+            `
+        },
+        {
+            name: 'asignada',
+            query: `
+                SELECT solicitudes.*, u.Correo, u.Nombre as UsuarioNombre, tecnicos.Nombre, tecnicos.IdTecnico
+                FROM solicitudes
+                LEFT JOIN usuarios u ON solicitudes.IdUsuario = u.IdUsuario
+                LEFT JOIN asignaciones ON solicitudes.IdAsignacion = asignaciones.IdAsignacion
+                LEFT JOIN tecnicos ON asignaciones.IdTecnico = tecnicos.IdTecnico
+                LEFT JOIN usuarios ON tecnicos.IdUsuario = usuarios.IdUsuario
+                WHERE solicitudes.Estado = "Asignada" AND solicitudes.Fecha BETWEEN ? AND ?
+            `
+        }
+    ];
+
+    const results = {};
+    let queriesCompleted = 0;
+
+    queries.forEach(({ name, query }) => {
+        connection.query(query, [desdeFecha, hastaFecha], (error, queryResults) => {
+            if (error) {
+                console.error(error);
+                res.status(500).json({ error: 'Error al filtrar las solicitudes' });
+                return;
+            }
+
+            results[name] = queryResults;
+
+            queriesCompleted++;
+            if (queriesCompleted === queries.length) {
+                res.json(results);
+            }
+        });
+    });
+});
+
 //11 Autenticacion
 app.post('/auth', async (req,res)=> {
     const user = req.body.username;

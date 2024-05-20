@@ -426,6 +426,27 @@
 <body>
 <div class="container" style="max-width: 100%;">
     <h2 id="estadoSolicitudes">Estado de solicitudes</h2>
+    <div class="filtroFechaEstatus">
+        <form id="filtroFormEstatus">
+            <div class="row justify-content-center align-items-end">
+                <p class="text-justify mt-2 mb-0">Seleccione el periodo de tiempo que desea mostrar en las solicitudes</p>
+                
+                <div class="col-md-3">
+                    <label class="small mb-1 is-required" for="input_desde_status">Desde:</label>
+                    <input class="form-control" id="input_desde_status" type="date" required autocomplete="off" name="desdeFecha" placeholder="Ingrese desde qué fecha"/>
+                </div>
+    
+                <div class="col-md-3">
+                    <label class="small mb-1 is-required" for="input_hasta_status">Hasta:</label>
+                    <input type="date" class="form-control" name="hastaFecha" required autocomplete="off" placeholder="Ingrese hasta qué fecha" id="input_hasta_status">
+                </div>
+    
+                <div class="col-md-3 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary">Filtrar entre fechas</button>
+                </div>
+            </div>
+        </form>
+    </div>
     <div class="guardarCambios">
         <button type="button" class="btn btn-outline-dark" id="guardarCambios">Guardar cambios</button>
     </div>
