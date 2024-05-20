@@ -65,7 +65,29 @@ document.getElementById('filtroForm').addEventListener('submit', async function(
             `;
             historialBody.appendChild(row);
         });
+        // Aplicar colores a las celdas después de actualizar la tabla
+        var celdas = document.querySelectorAll('.estado-celda');
+        celdas.forEach(function(celda) {
+            var estado = celda.getAttribute('data-estado');
+            obtenerColorEstado(estado, function(color) {
+                celda.style.backgroundColor = color;
+            });
+        });
+
     } catch (error) {
         console.error('Error al filtrar las solicitudes:', error);
     }
 });
+
+// Función para obtener el color correspondiente al estado
+function obtenerColorEstado(estado, callback) {
+    var colores = {
+        'Proceso': '#007BFF', // Azul
+        'Asignada': '#FFC107', // Amarillo
+        'Espera': '#87CEEB', // Azul claro
+        'Abierto': '#FF0000', // Rojo
+        'Cerrado': '#28A745' // Verde
+    };
+    // Llama al callback con el color correspondiente al estado
+    callback(colores[estado] || ''); // Si el estado no tiene un color asignado, usa una cadena vacía
+}
