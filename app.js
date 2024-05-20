@@ -321,8 +321,12 @@ app.get('/panelAdmin',authPage('Admin'), async (req, res) => {
             ruta: 'login'
         });
     }
+
     const fechaHaceUnaSemana = obtenerFechaHaceUnaSemana();
- 
+    const { desdeFechaEstatus, hastaFechaEstatus } = req.session.panelAdmin || {};
+
+    const fechaInicio = desdeFechaEstatus;
+    const fechaFinal = hastaFechaEstatus;
     const conteoEstados = await query(`SELECT Estado AS estado, COUNT(*) AS total FROM solicitudes GROUP BY Estado`);
     const tecnicos = await query('SELECT * FROM tecnicos');
     const edificios = await query('SELECT * FROM edificios');
@@ -331,12 +335,13 @@ app.get('/panelAdmin',authPage('Admin'), async (req, res) => {
     const usuariosTecnicos = await query('SELECT * FROM usuarios WHERE rol = "Tecnico" AND NOT EXISTS ( SELECT 1 FROM tecnicos WHERE tecnicos.IdUsuario = usuarios.IdUsuario )');
     const historialSoli = await query(`SELECT s.FolioSolicitud AS FolioSolicitud,s.Fecha AS Fecha,s.Hora AS Hora,u.Nombre AS NombreUsuario,s.Equipo AS Equipo,s.Estado AS Estado,s.Descripcion AS Descripcion,CASE WHEN v.FolioSolicitud IS NOT NULL THEN 'Disponible' WHEN d.FolioSolicitud IS NOT NULL THEN 'No disponible' ELSE 'No Disponible' END AS Vale,CASE WHEN d.FolioSolicitud IS NOT NULL THEN 'Disponible' ELSE 'No Disponible' END AS Dictamen FROM solicitudes s LEFT JOIN vales v ON s.FolioSolicitud = v.FolioSolicitud LEFT JOIN dictamenes d ON s.FolioSolicitud = d.FolioSolicitud LEFT JOIN usuarios u ON s.IdUsuario = u.IdUsuario ORDER BY FolioSolicitud DESC; `);
     const soloAbiertas = await query('SELECT solicitudes.*, usuarios.Correo,usuarios.Nombre FROM solicitudes JOIN usuarios ON solicitudes.IdUsuario = usuarios.IdUsuario WHERE solicitudes.Estado = "Abierto"')
+    //const soloAbiertas = await query(`SELECT solicitudes.*, usuarios.Correo,usuarios.Nombre FROM solicitudes JOIN usuarios ON solicitudes.IdUsuario = usuarios.IdUsuario WHERE solicitudes.Estado = "Abierto" AND solicitudes.Fecha BETWEEN '${desdeFechaEstatus}' AND '${hastaFechaEstatus}'`);
     const soliPendiente = await query('SELECT solicitudes.*, usuarios.Correo,usuarios.Nombre FROM solicitudes JOIN usuarios ON solicitudes.IdUsuario = usuarios.IdUsuario WHERE solicitudes.Estado = "Proceso"')
     const soliCerradas = await query('SELECT solicitudes.*, usuarios.Correo,usuarios.Nombre FROM solicitudes JOIN usuarios ON solicitudes.IdUsuario = usuarios.IdUsuario WHERE solicitudes.Estado =  "Cerrado"')
     const resultadoConsulta = await query('SELECT COUNT(*) AS totalSolicitudes FROM solicitudes WHERE Estado = "Asignada"');
-    const resultadoSolicitudes = await query('SELECT COUNT(*) AS totalSolicitudes FROM solicitudes'); 
+    const resultadoSolicitudes = await query('SELECT COUNT(*) AS totalSolicitudes FROM solicitudes');
     const resultadoSemanal = await query(`SELECT COUNT(*) AS totalSolicitudes FROM solicitudes WHERE Fecha > '${fechaHaceUnaSemana}'`);
-    const resultadoVales = await query('SELECT COUNT(*) AS totalSolicitudes FROM vales');       
+    const resultadoVales = await query('SELECT COUNT(*) AS totalSolicitudes FROM vales');
     const soliEspera = await query('SELECT solicitudes.*, usuarios.Correo,usuarios.Nombre FROM solicitudes JOIN usuarios ON solicitudes.IdUsuario = usuarios.IdUsuario WHERE solicitudes.Estado =  "Espera"')
     const soliAsignada = await query('SELECT solicitudes.*,u.Correo, u.Nombre as UsuarioNombre, tecnicos.Nombre, tecnicos.IdTecnico FROM solicitudes LEFT JOIN usuarios u ON solicitudes.IdUsuario = u.IdUsuario LEFT JOIN asignaciones ON solicitudes.IdAsignacion = asignaciones.IdAsignacion LEFT JOIN tecnicos ON asignaciones.IdTecnico = tecnicos.IdTecnico LEFT JOIN usuarios ON tecnicos.IdUsuario = usuarios.IdUsuario WHERE solicitudes.Estado = "Asignada"')
     const inforVales = await query("SELECT v.*, COALESCE(d.idDictamen, 'No existe') AS IdDictamen, u.Nombre AS NombreUsuario, COALESCE(a.Diagnostico, 'No disponible') AS Diagnostico, COALESCE(a.Solucion, 'No disponible') AS Solucion, COALESCE(a.Encuesta, 'No disponible') AS Encuesta, COALESCE(a.Mensaje, 'No disponible') AS Mensaje FROM vales v LEFT JOIN dictamenes d ON v.idVale = d.idVale LEFT JOIN solicitudes s ON v.folioSolicitud = s.FolioSolicitud LEFT JOIN usuarios u ON s.IdUsuario = u.IdUsuario LEFT JOIN asignaciones a ON s.FolioSolicitud = a.IdSolicitud ORDER BY v.idVale DESC;");
@@ -394,7 +399,6 @@ function obtenerFechaHaceUnaSemana() {
 
     return fechaFormateadaSemanaPasada;
 }
-
 
 // BUSQUEDA DE FOLIO PARA RELLENO AUTOMATICO DE INFO EN DICTAMENES
 app.get('/obtener-informacion-folio/:folioSolicitud',authPage('Admin'), (req, res) => {
