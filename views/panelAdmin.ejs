@@ -1654,7 +1654,7 @@
                             <td><a href="/descargarPDFvale?folioSolicitud=<%= variables.FolioSolicitud %>"><img src="resources/images/downloads.png" alt="Descargar Vale"></a></td>
                             <td><a href="/descargarPDFdictamen?folioSolicitud=<%= variables.FolioSolicitud %>"><img src="resources/images/downloads.png" alt="Descargar Dictamen"></a></td>
                             <td>
-                                <% if (variables.Diagnostico) { %>
+                                <% if (variables.Diagnostico || variables.Mensaje) { %>
                                     <a href="#" class="btn btn-diagnostico" data-toggle="modal" data-target="#exampleModalLong3" data-diagnostico="<%= variables.Diagnostico %>" data-solucion="<%= variables.Solucion %>" data-mensaje="<%= variables.Mensaje %>">
                                         <img src="resources/images/ver.png" alt="Ojo">
                                     </a>
