@@ -247,9 +247,11 @@
                                             <img src="resources/images/downloads.png" alt="Descargar Vale">
                                         </a> &nbsp &nbsp &nbsp <%= solicitud.Vale %></td>
                                     <td>
+                                        <% if (solicitud.Dictamen === "Disponible") { %>
                                         <a href="/descargarPDFdictamen?folioSolicitud=<%= solicitud.FolioSolicitud %>">
                                             <img src="resources/images/downloads.png" alt="Descargar Dictamen">
                                         </a> &nbsp &nbsp &nbsp <%= solicitud.Dictamen %></td>
+                                        <% } %>
                                     <td>
                                         <% if (solicitud.Encuesta) { %>
                                                 <!-- Si la encuesta ya ha sido respondida -->

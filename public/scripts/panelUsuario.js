@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
     // Activar la primera opción por defecto
-    mostrarContenido('solicitud-de-reportes');
+    mostrarContenido('historial');
 });
 
 function mostrarContenido(id) {
