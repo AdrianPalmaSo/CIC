@@ -711,7 +711,6 @@ app.post('/responder-encuesta', async (req, res) => {
     const usuario = await query(`SELECT IdUsuario FROM encuesta_satisfaccion WHERE Token = "${token}"`);
 
     if (usuario.length > 0) {
-        const idUsuario = usuario[0].IdUsuario;
         const actualizarEncuesta = await query(`UPDATE asignaciones SET Encuesta = "${pregunta}" WHERE IdSolicitud = "${folioSolicitud}"`);
 
         if (actualizarEncuesta.affectedRows > 0) {
