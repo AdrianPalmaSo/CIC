@@ -6,7 +6,6 @@
     <title>Inicio de Sesión</title>
     <link rel="stylesheet" href="resources/css/style_login.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
-
 </head>
 <body>
 <p></p>
@@ -77,15 +76,15 @@
 <!--Tenemos que llamar la estructura para usar el mensaje AlertSweet en EJS llamando los parametros establecidos en APPJS-->
 <% if(typeof alert != "undefined"){ %>
 <script>
-    Swal.fire({
-    title: '<%= alertTitle %>',
-    text: '<%= alertMessage %>',
-    icon: '<%= alertIcon %>',
-    showConfirmButton: <%= showConfirmButton %>,
-    timer: <%= timer %>
-}).then(() =>{
-    window.location ='/<%= ruta %>'    //Hay que especificar la ruta con '/' que indica que nos redirige a la raiz, index
-})
+     Swal.fire({
+     title: '<%= alertTitle %>',
+     text: '<%= alertMessage %>',
+     icon: '<%= alertIcon %>',
+     showConfirmButton: <%= showConfirmButton %>,
+     timer: <%= timer %>
+ }).then(() =>{
+     window.location ='/<%= ruta %>'    //Hay que especificar la ruta con '/' que indica que nos redirige a la raiz, index
+ })
 </script>
 <% } %>
 

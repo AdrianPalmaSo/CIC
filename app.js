@@ -10,7 +10,7 @@ const {authPage,authSub} = require('./middleware');
 const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 const bodyParser = require('body-parser');
-
+const helmet = require('helmet');
 //seteamos urlencoded para capturar los datos del formulario
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
@@ -23,6 +23,13 @@ dotenv.config({path: './env/.env'})
 app.use('/resources', express.static('public'));
 app.use('/resources', express.static(__dirname + '/public'));
 
+//Configurar helmet
+
+app.use(helmet({
+    contentSecurityPolicy: false
+  }));
+
+  
 ///Establecer el motor de plantillas
 app.set('view engine', 'ejs');
 
