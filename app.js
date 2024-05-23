@@ -330,10 +330,7 @@ app.get('/panelAdmin',authPage('Admin'), async (req, res) => {
     }
 
     const fechaHaceUnaSemana = obtenerFechaHaceUnaSemana();
-    const { desdeFechaEstatus, hastaFechaEstatus } = req.session.panelAdmin || {};
 
-    const fechaInicio = desdeFechaEstatus;
-    const fechaFinal = hastaFechaEstatus;
     const conteoEstados = await query(`SELECT Estado AS estado, COUNT(*) AS total FROM solicitudes GROUP BY Estado`);
     const tecnicos = await query('SELECT * FROM tecnicos');
     const edificios = await query('SELECT * FROM edificios');
@@ -342,7 +339,6 @@ app.get('/panelAdmin',authPage('Admin'), async (req, res) => {
     const usuariosTecnicos = await query('SELECT * FROM usuarios WHERE rol = "Tecnico" AND NOT EXISTS ( SELECT 1 FROM tecnicos WHERE tecnicos.IdUsuario = usuarios.IdUsuario )');
     const historialSoli = await query(`SELECT s.FolioSolicitud AS FolioSolicitud,s.Fecha AS Fecha,s.Hora AS Hora,u.Nombre AS NombreUsuario,s.Equipo AS Equipo,s.Estado AS Estado,s.Descripcion AS Descripcion,CASE WHEN v.FolioSolicitud IS NOT NULL THEN 'Disponible' WHEN d.FolioSolicitud IS NOT NULL THEN 'No disponible' ELSE 'No Disponible' END AS Vale,CASE WHEN d.FolioSolicitud IS NOT NULL THEN 'Disponible' ELSE 'No Disponible' END AS Dictamen FROM solicitudes s LEFT JOIN vales v ON s.FolioSolicitud = v.FolioSolicitud LEFT JOIN dictamenes d ON s.FolioSolicitud = d.FolioSolicitud LEFT JOIN usuarios u ON s.IdUsuario = u.IdUsuario ORDER BY FolioSolicitud DESC; `);
     const soloAbiertas = await query('SELECT solicitudes.*, usuarios.Correo,usuarios.Nombre FROM solicitudes JOIN usuarios ON solicitudes.IdUsuario = usuarios.IdUsuario WHERE solicitudes.Estado = "Abierto"')
-    //const soloAbiertas = await query(`SELECT solicitudes.*, usuarios.Correo,usuarios.Nombre FROM solicitudes JOIN usuarios ON solicitudes.IdUsuario = usuarios.IdUsuario WHERE solicitudes.Estado = "Abierto" AND solicitudes.Fecha BETWEEN '${desdeFechaEstatus}' AND '${hastaFechaEstatus}'`);
     const soliPendiente = await query('SELECT solicitudes.*, usuarios.Correo,usuarios.Nombre FROM solicitudes JOIN usuarios ON solicitudes.IdUsuario = usuarios.IdUsuario WHERE solicitudes.Estado = "Proceso"')
     const soliCerradas = await query('SELECT solicitudes.*, usuarios.Correo,usuarios.Nombre FROM solicitudes JOIN usuarios ON solicitudes.IdUsuario = usuarios.IdUsuario WHERE solicitudes.Estado =  "Cerrado"')
     const resultadoConsulta = await query('SELECT COUNT(*) AS totalSolicitudes FROM solicitudes WHERE Estado = "Asignada"');
@@ -722,7 +718,6 @@ app.post('/responder-encuesta', async (req, res) => {
     const usuario = await query(`SELECT IdUsuario FROM encuesta_satisfaccion WHERE Token = "${token}"`);
 
     if (usuario.length > 0) {
-        const idUsuario = usuario[0].IdUsuario;
         const actualizarEncuesta = await query(`UPDATE asignaciones SET Encuesta = "${pregunta}" WHERE IdSolicitud = "${folioSolicitud}"`);
 
         if (actualizarEncuesta.affectedRows > 0) {
