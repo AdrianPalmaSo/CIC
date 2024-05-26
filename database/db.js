@@ -41,7 +41,6 @@ connection.getConnection((err, connection) => {
 
     if (connection) connection.release();
 
-    return;
 });
 
 // Exportar el pool para que pueda ser usado en otros lugares

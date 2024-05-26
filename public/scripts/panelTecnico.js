@@ -69,9 +69,8 @@ function seleccionarFolioEnDiagnostico(folio) {
 }
 
 function setAction(action) {
-    var form = document.getElementById('formDiagnostico');
-    var comentarioT = document.getElementById('comentarioT');
-    var solucion = document.getElementById('solucion');
+    let form = document.getElementById('formDiagnostico');
+    let solucion = document.getElementById('solucion');
 
     // Si se hace clic en "Enviar comentario"
     if (action === 'crearComentario') {
@@ -89,6 +88,6 @@ function setAction(action) {
     }
 
     // Actualizar el valor del campo oculto de folioSeleccionado
-    var selectValue = document.getElementById('folios').value;
+    let selectValue = document.getElementById('folios').value;
     document.getElementById('folioSeleccionado').value = selectValue;
 }

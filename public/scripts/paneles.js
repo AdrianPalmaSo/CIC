@@ -5,14 +5,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
 function mostrarContenido(opcionSeleccionada) {
     // Oculta todos los contenidos
-    var contenidos = document.querySelectorAll('.contenido-individual');
+    let contenidos = document.querySelectorAll('.contenido-individual');
     contenidos.forEach(function(contenido) {
         contenido.style.display = 'none';
     });
 
     // Muestra el contenido seleccionado
     const id = opcionSeleccionada.getAttribute('data-id');
-    var contenidoSeleccionado = document.getElementById(id);
+    let contenidoSeleccionado = document.getElementById(id);
     if (contenidoSeleccionado) {
         contenidoSeleccionado.style.display = 'block';
     }
@@ -28,13 +28,13 @@ function mostrarContenido(opcionSeleccionada) {
 }
 
 function handleDescripcionClick() {
-    var descripcion = $(this).data('descripcion');
+    let descripcion = $(this).data('descripcion');
 
     // Limpiar tabla de descripciones
     $('#descripcionesProblema').empty();
 
     // Agregar la descripción a la tabla en el modal
-    var row = $('<tr>');
+    let row = $('<tr>');
     row.append('<td>' + descripcion + '</td>');
 
     $('#descripcionesProblema').append(row);
@@ -86,9 +86,9 @@ $('#filtroForm').submit(async function(e) {
             historialBody.appendChild(row);
         });
         // Aplicar colores a las celdas después de actualizar la tabla
-        var celdas = document.querySelectorAll('.estado-celda');
+        let celdas = document.querySelectorAll('.estado-celda');
         celdas.forEach(function(celda) {
-            var estado = celda.getAttribute('data-estado');
+            let estado = celda.getAttribute('data-estado');
             obtenerColorEstado(estado, function(color) {
                 celda.style.backgroundColor = color;
             });
@@ -105,7 +105,7 @@ $('#filtroForm').submit(async function(e) {
 
 // Función para obtener el color correspondiente al estado
 function obtenerColorEstado(estado, callback) {
-    var colores = {
+    let colores = {
         'Proceso': '#007BFF', // Azul
         'Asignada': '#FFC107', // Amarillo
         'Espera': '#87CEEB', // Azul claro

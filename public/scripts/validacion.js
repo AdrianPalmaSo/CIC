@@ -1,6 +1,6 @@
 function validar() {
-    var p1 = document.getElementById("password").value;
-    var p2 = document.getElementById("password2").value;
+    let p1 = document.getElementById("password").value;
+    let p2 = document.getElementById("password2").value;
     const correo = document.getElementById("correo").value;
     // Verificar longitud mínima de 8 caracteres
     if (p1.length < 8) {
@@ -8,8 +8,8 @@ function validar() {
         return false;
     }
 
-    var espacios = false;
-    var cont = 0;
+    let espacios = false;
+    let cont = 0;
 
     while (!espacios && (cont < p1.length)) {
         if (p1.charAt(cont) == " ")
@@ -38,7 +38,7 @@ function validar() {
     }
 }
 function validarActualizacion() {
-    var tel = document.getElementById("tecnicoTelefono").value;
+    let tel = document.getElementById("tecnicoTelefono").value;
     const correo = document.getElementById("tecnicoCorreo").value;
     // Verificar longitud mínima de 8 caracteres
     if (tel.length != 10) {
@@ -46,8 +46,8 @@ function validarActualizacion() {
         return false;
     }
 
-    var espacios = false;
-    var cont = 0;
+    let espacios = false;
+    let cont = 0;
 
     while (!espacios && (cont < tel.length)) {
         if (tel.charAt(cont) == " ")

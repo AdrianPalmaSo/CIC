@@ -1,12 +1,12 @@
 
 document.addEventListener('DOMContentLoaded', function() {
     // Obtén todas las celdas con la clase 'estado-celda'
-    var celdas = document.querySelectorAll('.estado-encuesta');
+    let celdas = document.querySelectorAll('.estado-encuesta');
 
     // Itera sobre cada celda
     celdas.forEach(function(celda) {
         // Obtiene el valor del estado desde el atributo 'data-estado'
-        var estado = celda.getAttribute('data-estado');
+        let estado = celda.getAttribute('data-estado');
 
         obtenerColorEstado(estado, function(color) {
             // Agrega la clase de estilo correspondiente al color obtenido
@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Función para obtener el color correspondiente al estado
     function obtenerColorEstado(estado, callback) {
-        var colores = {
+        let colores = {
             'Regular': '#FFDA6A',
             'Excelente': '#008f39',
             'Buena': '#3AE261',
