@@ -27,56 +27,82 @@ function mostrarContenido(opcionSeleccionada) {
     opcionSeleccionada.classList.add('seleccionada');
 }
 
-document.getElementById('filtroForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
+$(document).ready(function() {
+    // Función para manejar el evento click del botón de observaciones
+    function handleDescripcionClick() {
+        var descripcion = $(this).data('descripcion');
 
-    const desdeFecha = document.getElementById('input_desde').value;
-    const hastaFecha = document.getElementById('input_hasta').value;
+        // Limpiar tabla de descripciones
+        $('#descripcionesProblema').empty();
 
-    try {
-        //console.log("enviando las fechas");
-        const response = await fetch(`/filtroFechaSolicitudes?desdeFecha=${desdeFecha}&hastaFecha=${hastaFecha}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
+        // Agregar la descripción a la tabla en el modal
+        var row = $('<tr>');
+        row.append('<td>' + descripcion + '</td>');
 
-        if (!response.ok) {
-            throw new Error('Error al filtrar las solicitudes');
-        }
-
-        const resultados = await response.json();
-        const historialBody = document.getElementById('historialBodySoli');
-        historialBody.innerHTML = '';
-
-        resultados.forEach(solicitud => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${solicitud.FolioSolicitud}</td>
-                <td>${solicitud.Fecha}</td>
-                <td>${solicitud.Hora}</td>
-                <td>${solicitud.NombreUsuario}</td>
-                <td>${solicitud.Equipo}</td>
-                <td>${solicitud.Descripcion}</td>
-                <td class="estado-celda" data-estado="${solicitud.Estado}">${solicitud.Estado}</td>
-                <td>${solicitud.Vale}</td>
-                <td>${solicitud.Dictamen}</td>
-            `;
-            historialBody.appendChild(row);
-        });
-        // Aplicar colores a las celdas después de actualizar la tabla
-        var celdas = document.querySelectorAll('.estado-celda');
-        celdas.forEach(function(celda) {
-            var estado = celda.getAttribute('data-estado');
-            obtenerColorEstado(estado, function(color) {
-                celda.style.backgroundColor = color;
-            });
-        });
-
-    } catch (error) {
-        console.error('Error al filtrar las solicitudes:', error);
+        $('#descripcionesProblema').append(row);
     }
+
+    // Agregar el evento click a los botones de observaciones
+    $('.btn-descripcion').click(handleDescripcionClick);
+
+    // Función para manejar el submit del formulario de filtrado de fechas
+    $('#filtroForm').submit(async function(e) {
+        e.preventDefault();
+
+        const desdeFecha = document.getElementById('input_desde').value;
+        const hastaFecha = document.getElementById('input_hasta').value;
+
+        try {
+            const response = await fetch(`/filtroFechaSolicitudes?desdeFecha=${desdeFecha}&hastaFecha=${hastaFecha}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Error al filtrar las solicitudes');
+            }
+
+            const resultados = await response.json();
+            const historialBody = document.getElementById('historialBodySoli');
+            historialBody.innerHTML = '';
+
+            resultados.forEach(solicitud => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${solicitud.FolioSolicitud}</td>
+                    <td>${solicitud.Fecha}</td>
+                    <td>${solicitud.Hora}</td>
+                    <td>${solicitud.NombreUsuario}</td>
+                    <td>${solicitud.Equipo}</td>
+                    <td>
+                        <a href="#" class="btn btn-descripcion" data-toggle="modal" data-target="#exampleModalLong5" data-descripcion="${solicitud.Descripcion}">
+                            <img src="resources/images/ver.png" alt="Ojo">
+                        </a>
+                    </td>
+                    <td class="estado-celda" data-estado="${solicitud.Estado}">${solicitud.Estado}</td>
+                    <td>${solicitud.Vale}</td>
+                    <td>${solicitud.Dictamen}</td>
+                `;
+                historialBody.appendChild(row);
+            });
+            // Aplicar colores a las celdas después de actualizar la tabla
+            var celdas = document.querySelectorAll('.estado-celda');
+            celdas.forEach(function(celda) {
+                var estado = celda.getAttribute('data-estado');
+                obtenerColorEstado(estado, function(color) {
+                    celda.style.backgroundColor = color;
+                });
+            });
+
+            // Reasignar el evento click a los nuevos botones de observaciones
+            $('.btn-descripcion').click(handleDescripcionClick);
+
+        } catch (error) {
+            console.error('Error al filtrar las solicitudes:', error);
+        }
+    });
 });
 
 document.getElementById('filtroFormEstatus').addEventListener('submit', function(event) {
