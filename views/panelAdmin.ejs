@@ -1151,7 +1151,7 @@
         </head>
         <body>
         <div class="container mt-4">
-            <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <ul class="nav nav-tabs nav-fill" id="myTab" role="tablist">
                 <li class="nav-item" role="presentation">
                     <button class="nav-link active" id="registro-tab" data-bs-toggle="tab" data-bs-target="#formRegistrar" type="button" role="tab" aria-controls="formRegistrar" aria-selected="true">Registrar Usuario</button>
                 </li>
@@ -1327,172 +1327,170 @@
     <!-- Contenido de Registro -->
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Registro usuarios</title>
-        <link rel="stylesheet" href="resources/css/style_registro.css">
+        <title>Registro Técnicos</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
         <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="resources/css/style_registro.css">
     </head>
     <body>
-<div class="contenedor" id="contenedorTecnicos">
-    <h3 class="titulosLogin">Registrar Tecnico</h3>
-    <form action="registerT" method="post" id="formRegistro">
-        <div class="registroCampos">
-            <label for="nombreT" class="lblRegistro required">Nombres:</label>
-            <input type="text" class="form-control" name="nombreT" placeholder="Nombre(s)" required>
-        </div>
-        <div class="registroCampos">
-            <label for="apellidos" class="lblRegistro required">Apellidos</label>
-            <input type="text" class="form-control" name="apellidos" placeholder="Apellido paterno y materno" required>
-        </div>
-        <div class="registroCampos">
-            <label for="noTrabajador" class="lblRegistro required">Numero de trabajador</label>
-            <input type="text" class="form-control" name="noTrabajador" placeholder="Numero de trabajador" required>
-        </div>
-        <div class="registroCampos">
-            <label for="email" class="lblRegistro required">Correo institucional</label>
-            <input type="text" class="form-control" name="email" placeholder="correo@uacam.mx" required>
-        </div>
-        <div class="registroCampos">
-            <label for="telef" class="lblRegistro required">Telefono</label>
-            <input type="text" class="form-control" name="telef" placeholder="xxx-xxx-xxxx" required>
-        </div>
-        <div class="selects_registro" id="registroTecnico">
-                <label for="idUsuario" class="col-sm-2 col-form-label required" id="lblTec">Id de usuario en CIC Assistance:</label>
-                    <select name="IdUsuario" id="tecnicoId" class="form-select form-select-sm" required>
-                        <% usuariosTecnicos.forEach(usuario => { %>
-                            <option value="<%= usuario.IdUsuario %>"><%= usuario.IdUsuario %>-<%= usuario.Nombre %></option>
-                        <% }); %>
-                    </select>
-        </div>
-        <div id="enviarRegistro">
-            <input type="submit" value="Registrar" class="btn btn-outline-dark">
-        </div>
-    </form>
-
-    <div id="techniciansList" class="w-75" style="display:none;">
-        <h5>Técnicos Registrados</h5>
-        <div class="table-responsive" style="max-height: 45em;">
-            <table class="table overflow-auto">
-                <thead>
-                    <tr>
-                        <th scope="col">Id técnico</th>
-                        <th scope="col">Nombre</th>
-                        <th scope="col">No.Trabajador</th>
-                        <th scope="col">Correo</th>
-                        <th scope="col">Editar</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <% tecnicos.forEach(tecnico => { %>
-                    <tr>
-                        <td><%= tecnico.IdTecnico %></td>
-                        <td><%= tecnico.Nombre%></td>
-                        <td><%= tecnico.NoTrabajador %></td>
-                        <td><%= tecnico.Correo%></td>
-                        <td><button type="button" class="btn btn-edit" data-bs-toggle="modal" data-id="<%= tecnico.IdTecnico %>" data-bs-target="#exampleModal"><i class="bi bi-pencil-square"></i></button></td>
-                    </tr>
-                    <% }); %>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <button type="button" class="btn btn-outline-dark" id="showTechniciansBtn">
-        Ver listado de técnicos registrados
-    </button>
-    <br>
-    <!-- Div Mostrar tecnicos-->
-    
-
-    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-scrollable">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel">Editar técnico</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-              <form method="POST" action="/actualizarTecnico" onsubmit="return validarActualizacion();">
-                <div class="row gx-3 mb-3 ">
-                    <div class="col-md-6">
-                        <label for="tecnicoNombre" class="col-form-label">Nombre:</label>
-                        <input type="text" class="form-control" id="tecnicoNombre" name="tecnicoNombre">
-                    </div>
-                    <input type="hidden" class="form-control" id="tecId" name="tecId">
-                    <div class="col-md-6">
-                        <label for="tecnicoNumero" class="col-form-label">No. Trabajador:</label>
-                        <input type="text" class="form-control" id="tecnicoNumero" name="tecnicoNumero">
+        <div class="container mt-4">
+            <ul class="nav nav-tabs nav-fill" id="myTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="registro-tab" data-bs-toggle="tab" data-bs-target="#registro" type="button" role="tab" aria-controls="registro" aria-selected="true">Registrar Técnico</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="lista-tab" data-bs-toggle="tab" data-bs-target="#lista" type="button" role="tab" aria-controls="lista" aria-selected="false">Lista de Técnicos</button>
+                </li>
+            </ul>
+            <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade show active" id="registro" role="tabpanel" aria-labelledby="registro-tab">
+                    <div class="d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+                        <div class="col-md-8">
+                            <h3 class="titulosLogin text-center">Registrar Técnico</h3>
+                            <form action="registerT" method="post" id="formRegistro">
+                                <div class="registroCampos">
+                                    <label for="nombreT" class="lblRegistro required">Nombres:</label>
+                                    <input type="text" class="form-control" name="nombreT" placeholder="Nombre(s)" required>
+                                </div>
+                                <div class="registroCampos">
+                                    <label for="apellidos" class="lblRegistro required">Apellidos</label>
+                                    <input type="text" class="form-control" name="apellidos" placeholder="Apellido paterno y materno" required>
+                                </div>
+                                <div class="registroCampos">
+                                    <label for="noTrabajador" class="lblRegistro required">Número de trabajador</label>
+                                    <input type="text" class="form-control" name="noTrabajador" placeholder="Número de trabajador" required>
+                                </div>
+                                <div class="registroCampos">
+                                    <label for="email" class="lblRegistro required">Correo institucional</label>
+                                    <input type="email" class="form-control" name="email" placeholder="correo@uacam.mx" required>
+                                </div>
+                                <div class="registroCampos">
+                                    <label for="telef" class="lblRegistro required">Teléfono</label>
+                                    <input type="text" class="form-control" name="telef" placeholder="xxx-xxx-xxxx" required>
+                                </div>
+                                <div class="selects_registro" id="registroTecnico">
+                                    <label for="idUsuario" class="col-sm-2 col-form-label required" id="lblTec">Id de usuario en CIC Assistance:</label>
+                                    <select name="IdUsuario" id="tecnicoId" class="form-select form-select-sm" required>
+                                        <% usuariosTecnicos.forEach(usuario => { %>
+                                            <option value="<%= usuario.IdUsuario %>"><%= usuario.IdUsuario %>-<%= usuario.Nombre %></option>
+                                        <% }); %>
+                                    </select>
+                                </div>
+                                <div id="enviarRegistro">
+                                    <input type="submit" value="Registrar" class="btn btn-outline-dark">
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
-                <div class="row gx-3 mb-3 ">
-                  <div class="col-md-6">
-                    <label for="tecnicoCorreo" class="col-form-label">Correo:</label>
-                    <input type="text" class="form-control" id="tecnicoCorreo" name="tecnicoCorreo">
-                  </div>
-                  <div class="col-md-6">
-                    <label for="tecnicoTelefono" class="col-form-label">Teléfono:</label>
-                    <input type="text" class="form-control" id="tecnicoTelefono" name="tecnicoTelefono">
-                  </div>
+                <div class="tab-pane fade" id="lista" role="tabpanel" aria-labelledby="lista-tab">
+                    <h3 class="titulosLogin">Técnicos Registrados</h3>
+                    <div class="table-responsive" style="max-height: 45em;">
+                        <table class="table overflow-auto">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Id técnico</th>
+                                    <th scope="col">Nombre</th>
+                                    <th scope="col">No. Trabajador</th>
+                                    <th scope="col">Correo</th>
+                                    <th scope="col">Editar</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% tecnicos.forEach(tecnico => { %>
+                                <tr>
+                                    <td><%= tecnico.IdTecnico %></td>
+                                    <td><%= tecnico.Nombre %></td>
+                                    <td><%= tecnico.NoTrabajador %></td>
+                                    <td><%= tecnico.Correo %></td>
+                                    <td><button type="button" class="btn btn-edit" data-bs-toggle="modal" data-id="<%= tecnico.IdTecnico %>" data-bs-target="#exampleModal"><i class="bi bi-pencil-square"></i></button></td>
+                                </tr>
+                                <% }); %>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-                <button type="submit" class="btn btn-primary" onclick="validarActualizacion()">Guardar</button>
-              </form>
             </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            </div>
-          </div>
         </div>
-    </div>
 
-</div> 
-</div>
-<script src="resources/scripts/validacion.js"></script>
-<script>
-    document.getElementById('showTechniciansBtn').addEventListener('click', function() {
-        const techListDiv = document.getElementById('techniciansList');
-        if (techListDiv.style.display === 'none') {
-            techListDiv.style.display = 'block';
-        } else {
-            techListDiv.style.display = 'none';
-        }
-    });
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Editar técnico</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="POST" action="/actualizarTecnico" onsubmit="return validarActualizacion();">
+                            <div class="row gx-3 mb-3">
+                                <div class="col-md-6">
+                                    <label for="tecnicoNombre" class="col-form-label">Nombre:</label>
+                                    <input type="text" class="form-control" id="tecnicoNombre" name="tecnicoNombre">
+                                </div>
+                                <input type="hidden" class="form-control" id="tecId" name="tecId">
+                                <div class="col-md-6">
+                                    <label for="tecnicoNumero" class="col-form-label">No. Trabajador:</label>
+                                    <input type="text" class="form-control" id="tecnicoNumero" name="tecnicoNumero">
+                                </div>
+                            </div>
+                            <div class="row gx-3 mb-3">
+                                <div class="col-md-6">
+                                    <label for="tecnicoCorreo" class="col-form-label">Correo:</label>
+                                    <input type="text" class="form-control" id="tecnicoCorreo" name="tecnicoCorreo">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="tecnicoTelefono" class="col-form-label">Teléfono:</label>
+                                    <input type="text" class="form-control" id="tecnicoTelefono" name="tecnicoTelefono">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Guardar</button>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    document.querySelectorAll('.btn-edit').forEach(button => {
-    button.addEventListener('click', function() {
-        const tecnicoId = this.getAttribute('data-id');
-        console.log("Fetching data for tecnico ID:", tecnicoId);
-        // Hacer una solicitud AJAX para obtener la información del técnico por ID
-        fetch(`/getTecnicoById/${tecnicoId}`)
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('tecnicoNombre').value = data.Nombre;
-                document.getElementById('tecId').value = data.IdTecnico;
-              //  document.getElementById('tecnicoApellido').value = data.Apellidos;
-                document.getElementById('tecnicoNumero').value = data.NoTrabajador;
-                document.getElementById('tecnicoCorreo').value = data.Correo;
-                document.getElementById('tecnicoTelefono').value = data.Telefono;
-            })
-            .catch(error => console.error('Error:', error));
-        });
-    });
-</script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>  <!-- Obtenido de sweetAlert2  -->
-<!--Tenemos que llamar la estructura para usar el mensaje AlertSweet en EJS llamando los parametros establecidos en APPJS-->
-<% if(typeof alert != "undefined"){ %>
-<script>
-    Swal.fire({
-        title: '<%= alertTitle %>',
-        text: '<%= alertMessage %>',
-        icon: '<%= alertIcon %>',
-        showConfirmButton: <%= showConfirmButton %>,
-        timer: <%= timer %>
-    }).then(() =>{
-        window.location ='/<%= ruta %>'    //Hay que especificar la ruta con '/' que indica que nos redirige a la raiz, index
-    })
-</script>
-<% } %>
-</body>
+        <script src="resources/scripts/validacion.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <% if (typeof alert != "undefined") { %>
+        <script>
+            Swal.fire({
+                title: '<%= alertTitle %>',
+                text: '<%= alertMessage %>',
+                icon: '<%= alertIcon %>',
+                showConfirmButton: <%= showConfirmButton %>,
+                timer: <%= timer %>
+            }).then(() => {
+                window.location = '/<%= ruta %>';
+            });
+        </script>
+        <% } %>
+        <script>
+            document.querySelectorAll('.btn-edit').forEach(button => {
+                button.addEventListener('click', function() {
+                    const tecnicoId = this.getAttribute('data-id');
+                    console.log("Fetching data for tecnico ID:", tecnicoId);
+                    fetch(`/getTecnicoById/${tecnicoId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            document.getElementById('tecnicoNombre').value = data.Nombre;
+                            document.getElementById('tecId').value = data.IdTecnico;
+                            document.getElementById('tecnicoNumero').value = data.NoTrabajador;
+                            document.getElementById('tecnicoCorreo').value = data.Correo;
+                            document.getElementById('tecnicoTelefono').value = data.Telefono;
+                        })
+                        .catch(error => console.error('Error:', error));
+                });
+            });
+        </script>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXlPLyQuSFFSN1RlW8gydb7x4ej0ZXi+HEy4pE4LrzEYdqNOiscrwWJZ8L8R" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGZPr78rZLXz2tbi8gboC9D9VFT+z8ceRzTNhbZE/3DzBgLV7fqlae2xOHV" crossorigin="anonymous"></script>
+    </body>
 </div>
+
 
 
 <!-- Sección de estadisticas -->
