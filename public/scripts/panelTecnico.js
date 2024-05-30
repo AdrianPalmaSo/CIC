@@ -11,25 +11,28 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
-    //Deshabilitar botones si el estado esta en cerrado
+    //Deshabilitar botones si el estado esta en cerrado o espera
     const rows = document.querySelectorAll('tr');
 
     rows.forEach(row => {
         const estadoCell = row.querySelector('.estado-celda');
-        if (estadoCell && estadoCell.getAttribute('data-estado') === 'Cerrado') {
-            const estadoSelect = row.querySelector('#estadoSelect');
-            const redireccionButton = row.querySelector('button[data-redireccion]');
+        if (estadoCell) {
+            const estado = estadoCell.getAttribute('data-estado');
+            if (estado === 'Cerrado' || estado === 'Espera') {
+                const estadoSelect = row.querySelector('#estadoSelect');
+                const redireccionButton = row.querySelector('button[data-redireccion]');
 
-            if (estadoSelect) {
-                estadoSelect.disabled = true;
-                estadoSelect.style.backgroundColor = 'rgba(128, 128, 128, 0.5)';
-                estadoSelect.style.color = 'white';
-            }
+                if (estadoSelect) {
+                    estadoSelect.disabled = true;
+                    estadoSelect.style.backgroundColor = 'rgba(128, 128, 128, 0.5)';
+                    estadoSelect.style.color = 'white';
+                }
 
-            if (redireccionButton) {
-                redireccionButton.disabled = true;
-                redireccionButton.style.backgroundColor = 'gray';
-                redireccionButton.style.borderColor = 'gray';
+                if (redireccionButton) {
+                    redireccionButton.disabled = true;
+                    redireccionButton.style.backgroundColor = 'gray';
+                    redireccionButton.style.borderColor = 'gray';
+                }
             }
         }
     });
