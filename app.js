@@ -1443,16 +1443,15 @@ app.post('/actualizar-estado', async (req, res) => {
                     // Inserta en el log solo si hay un cambio en el estado
                     if (estadoOriginal !== nuevoEstado) {
                         connection.query(logQuery, [req.session.idUsuario, folio, nuevoEstado, fecha, hora], (logError, logResults) => {
-                            if (nuevoEstado === 'Cerrado') {
-                                enviarMail(6, usuarioEmail);
+                            if (nuevoEstado === 'Espera' || nuevoEstado === 'Asignada' || nuevoEstado === 'Proceso') {
+                                enviarMail(2, usuarioEmail);
                                 console.log('Correo enviado al usuario:', usuarioEmail);
                             }
-                            else if (logError) {
-                                console.error('Error al insertar en el log:', logError);
-                            } else {
-                                enviarMail(2,usuarioEmail);
+                            else if (nuevoEstado === 'Cerrado') {
+                                enviarMail(6,usuarioEmail);
                                 console.log('Cambio registrado en el log:', logResults);
-
+                            } else if (logError){
+                                console.error('Error al insertar en el log:', logError);
                             }
                         });
                     }
