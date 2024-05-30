@@ -41,7 +41,7 @@
 
 <!-- Menú de opciones -->
 <nav class="menu">
-    <div class="opcion-menu " data-id="solicitud-de-reportes" onclick="mostrarContenido('solicitud-de-reportes')">Solicitud de Servicio</div>
+    <div class="opcion-menu" data-id="solicitud-de-reportes" onclick="mostrarContenido('solicitud-de-reportes')">Solicitud de Servicio</div>
     <div class="opcion-menu" data-id="historial" onclick="mostrarContenido('historial')">Historial</div>
 </nav>
 
@@ -254,9 +254,9 @@
                                         </a> &nbsp &nbsp &nbsp <%= solicitud.Dictamen %></td>
                                         <% } %>
                                     <td>
-                                        <% if (solicitud.Encuesta) { %>
+                                        <% if (solicitud.Encuesta === "No disponible") { %>
                                                 <!-- Si la encuesta ya ha sido respondida -->
-                                                <p>Ya respondió</p>
+                                                <p>No disponible</p>
                                             <% } else if (solicitud.Estado === "Cerrado" && !solicitud.Encuesta) { %>
                                                 <!-- Si el estado es "Cerrado" y la encuesta no ha sido respondida -->
                                                 <form method="POST" action="/encuesta-satisfaccion?folioSolicitud=<%= solicitud.FolioSolicitud %>">
@@ -266,7 +266,8 @@
                                                 </form>
                                             <% } else { %>
                                                 <!-- Si el estado no es "Cerrado", no se muestra la imagen -->
-                                                <p>No disponible</p>
+                                                
+                                                <p>Ya respondió</p>
                                             <% } %>
                                 </td>
                                 </tr>

@@ -679,7 +679,7 @@ app.post('/encuesta-satisfaccion', async (req, res) => {
                             alertIcon: 'success',
                             showConfirmButton: false,
                             timer: 2000,
-                            ruta: 'login'
+                            ruta: 'panelUsuario'
                         });
                     }
                 });
