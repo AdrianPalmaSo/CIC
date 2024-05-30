@@ -1597,7 +1597,7 @@ app.post('/crearDiagnostico', async (req, res) => {
             // Inserción del diagnóstico y solución en la tabla asignaciones
             connection.query(`UPDATE asignaciones a
                 JOIN solicitudes s ON a.IdSolicitud = s.FolioSolicitud
-                SET a.Diagnostico = ?, a.Solucion = ?, s.Estado = 'Cerrado'
+                SET a.Diagnostico = ?, a.Solucion = ?, s.Estado = 'Espera'
                 WHERE a.IdSolicitud = ?;`,
                 [diagnosticoT, solucion, folioSeleccionado], (error, results) => {
                     if (error) {
