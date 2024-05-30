@@ -293,9 +293,9 @@ app.get('/panelUsuario',authPage(["Usuario","Admin","Tecnico"]), async (req, res
     const usuario = req.session.idUsuario;
     const edificios = await query('SELECT * FROM edificios');
     const historialUsuario = `
-    SELECT s.FolioSolicitud AS FolioSolicitud, s.Fecha AS Fecha, s.Equipo AS Equipo, s.Estado AS Estado, CASE WHEN v.FolioSolicitud IS NOT NULL THEN 'Disponible' ELSE 'No Disponible' END AS Vale, CASE WHEN d.FolioSolicitud IS NOT NULL THEN 'Disponible' ELSE 'No Disponible' END AS Dictamen, COALESCE(a.Encuesta, 'No disponible') AS Encuesta FROM solicitudes s LEFT JOIN vales v ON s.FolioSolicitud = v.FolioSolicitud LEFT JOIN dictamenes d ON s.FolioSolicitud = d.FolioSolicitud JOIN asignaciones a ON s.FolioSolicitud = a.IdSolicitud WHERE s.IdUsuario = ${usuario} ORDER BY FolioSolicitud DESC;
-    `;
+    SELECT s.FolioSolicitud AS FolioSolicitud, s.Fecha AS Fecha, s.Equipo AS Equipo, s.Estado AS Estado, CASE WHEN v.FolioSolicitud IS NOT NULL THEN 'Disponible' ELSE 'No Disponible' END AS Vale, CASE WHEN d.FolioSolicitud IS NOT NULL THEN 'Disponible' ELSE 'No Disponible' END AS Dictamen, COALESCE(a.Encuesta, 'No disponible') AS Encuesta FROM solicitudes s LEFT JOIN vales v ON s.FolioSolicitud = v.FolioSolicitud LEFT JOIN dictamenes d ON s.FolioSolicitud = d.FolioSolicitud LEFT JOIN asignaciones a ON s.FolioSolicitud = a.IdSolicitud WHERE s.IdUsuario = '${usuario}' ORDER BY FolioSolicitud DESC;`;
     const historial = await query(historialUsuario);
+    console.log(historial);
     res.render('panelUsuario', {
         edificios: edificios,
         login: req.session.loggedin,
