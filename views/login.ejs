@@ -6,14 +6,13 @@
     <title>Inicio de Sesión</title>
     <link rel="stylesheet" href="resources/css/style_login.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
-
 </head>
 <body>
 <p></p>
 <div class="contenedor">
     <a href="ruta_de_la_pagina_web_que_deseas"></a>
     <div class="encabezado">
-        <a href="https://www.uacam.mx/">
+        <a href="https://www.uacam.mx/" target="_blank">
             <img src="resources/images/baner_uacam.jpg" alt="Banner" width="70%">
         </a>
     </div>
@@ -41,8 +40,8 @@
 
     <div class="enlaces-sociales" >    <p></p>
         <h4 class="titulosLogin">Redes sociales UACAM</h4>
-        <a href="https://www.facebook.com/UACamOficial/"><img src="resources/images/face_logo.png" alt="Facebook"></a>
-        <a href="https://twitter.com/UacamOficial"><img src="resources/images/twitter_logo.jpg" alt="Twitter"></a>
+        <a href="https://www.facebook.com/UACamOficial/" target="_blank"><img src="resources/images/face_logo.png" alt="Facebook"></a>
+        <a href="https://twitter.com/UacamOficial" target="_blank"><img src="resources/images/twitter_logo.jpg" alt="Twitter"></a>
     </div>
 
    <!-- <div class="panel-privacidad">
@@ -77,15 +76,15 @@
 <!--Tenemos que llamar la estructura para usar el mensaje AlertSweet en EJS llamando los parametros establecidos en APPJS-->
 <% if(typeof alert != "undefined"){ %>
 <script>
-    Swal.fire({
-    title: '<%= alertTitle %>',
-    text: '<%= alertMessage %>',
-    icon: '<%= alertIcon %>',
-    showConfirmButton: <%= showConfirmButton %>,
-    timer: <%= timer %>
-}).then(() =>{
-    window.location ='/<%= ruta %>'    //Hay que especificar la ruta con '/' que indica que nos redirige a la raiz, index
-})
+     Swal.fire({
+     title: '<%= alertTitle %>',
+     text: '<%= alertMessage %>',
+     icon: '<%= alertIcon %>',
+     showConfirmButton: <%= showConfirmButton %>,
+     timer: <%= timer %>
+ }).then(() =>{
+     window.location ='/<%= ruta %>'    //Hay que especificar la ruta con '/' que indica que nos redirige a la raiz, index
+ })
 </script>
 <% } %>
 

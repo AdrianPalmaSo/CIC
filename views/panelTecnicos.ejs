@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menú</title>
+    <title>Menú técnicos</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="resources/css/style_menu_usuario.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
@@ -13,11 +13,11 @@
 </head>
 <body>
     <div class="logo-contenedor">
-        <a href="https://www.uacam.mx/">
+        <a href="https://www.uacam.mx/" target="_blank">
             <img src="resources/images/uac_logo.png" alt="Logo Izquierdo" class="logo-izquierdo">
         </a>
-        <h1 class="titulo-sitio" data-id="Estatus" onclick="mostrarContenido(this)">CIC Assistance</h1>
-        <a href="https://fi.uacam.mx/">
+        <h1 class="titulo-sitio" data-id="asignaciones" onclick="mostrarContenido('asignaciones')">CIC Assistance</h1>
+        <a href="https://fi.uacam.mx/" target="_blank">
             <img src="resources/images/facu_logo.png" alt="Logo Derecho" class="logo-derecho">
         </a>
     </div>
@@ -28,6 +28,7 @@
                 Usuario: <%= name %>
             </button>
             <div class="dropdown-menu">
+		<a class="dropdown-item" href="https://cicassistance.freshdesk.com/support/tickets/new" target="_blank">Contacto/Ticket</a>
                 <a class="dropdown-item" href="logout">Logout <i class="bi bi-box-arrow-right"></i></a>
             </div>
         </div>
@@ -63,8 +64,8 @@
                     </div>
                     -->
 
-                <div class="table-responsive">
-                        <table  class="table table-hover table-striped" id="TablaHistorialAsignaciones">
+                <div class="table-responsive" style="max-height: 45em;">
+                        <table  class="table table-hover table-striped overflow-auto" id="TablaHistorialAsignaciones" >
                             <thead>
                                 <th>Folio</th>
                                 <th>Nombre</th>
@@ -74,7 +75,10 @@
                                 <th>Modelo</th>
                                 <th>Serie</th>
                                 <th>Marca</th>
-                                <th>Estado</th>
+                                <th>Mover estado</th>
+                                <th>Estado de la solicitud</th>
+                                <th>Generar diagnóstico</th>
+                                <th>Encuesta de satisfacción</th>
                             </thead>
                             <% asignaciones.forEach((asignacion) => { %>
                                 <tr>
@@ -86,11 +90,21 @@
                                     <td><%= asignacion.ModeloEquipo %></td>
                                     <td><%= asignacion.NoSerieEquipo %></td>
                                     <td><%= asignacion.MarcaEquipo %></td>
+
                                     <td>
                                         <select class="form-select" id="estadoSelect" data-folio="<%= asignacion.FolioSolicitud %>">
                                             <option value="Asignada" selected>Asignada</option>
                                             <option value="Proceso">En proceso</option>
                                         </select>
+                                    </td>
+                                    <td class="estado-celda" data-estado="<%= asignacion.Estado %>"><%= asignacion.Estado%></td>
+                                    <td>
+                                        <i class="bi bi-pencil-square h3" data-redireccion data-folio="<%= asignacion.FolioSolicitud %>">
+
+                                        </i>
+                                    </td>
+                                    <td class="estado-encuesta" data-estado="<%= asignacion.Encuesta %>">
+                                        <%= asignacion.Encuesta %>
                                     </td>
                                 </tr>
                                 <% }); %>
@@ -98,11 +112,14 @@
                 </div>
                 <div class="btnFiltrar">
                     <button type="button" class="btn btn-outline-dark" id="guardarCambios">Guardar cambios</button>
-                    </div>
+                </div>
             </div>
             <script src="resources/scripts/cambiarEstadoAsignacion.js"></script>
+            <script src="resources/scripts/semaforoEncuesta.js"></script>
+
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
             <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>  <!-- Obtenido de sweetAlert2  -->
+
         </body>
     </div>
 
@@ -121,7 +138,7 @@
                 <div class="historialSolicitudes" id="contenedorDiagnostico">
                     <h2 >Generación de diagnósticos técnicos</h2>
                     <br>
-                    <form action="crearDiagnostico" method="post">
+                    <form id="formDiagnostico" method="post">
                         <div class="mb-3 row">
                             <label for="folios" class="col-sm-2 col-form-label labelMayor">Solicitudes asignadas</label>
                             <div class="col-sm-10">
@@ -135,13 +152,20 @@
                         <!-- Agregar campo oculto para el folio seleccionado -->
                         <input type="hidden" name="folioSeleccionado" id="folioSeleccionado">
                         <div class="mb-3 row">
+                            <label for="comentarioT" class="col-sm-2 col-form-label labelMayor">Comentario del Técnico:</label>
+                            <textarea class="form-control" placeholder="(Opcional) Ej: En espera de piezas" name="comentarioT" id="comentarioT" rows="8"></textarea>
+                        </div>
+                        <div class="enviarComentario">
+                            <button type="submit" class="btn btn-outline-dark" id="enviarComentario" value="Submit" onclick="setAction('crearComentario')">Enviar comentario</button>
+                        </div>
+                        <div class="mb-3 row">
                             <label for="diagnosticoT" class="col-sm-2 col-form-label labelMayor">Diagnóstico Técnico:</label>
                             <textarea class="form-control" name="diagnosticoT" id="diagnosticoT" rows="8"></textarea>
                             <label for="solucion" class="col-sm-2 col-form-label labelMayor">Solución aplicada:</label>
                             <textarea class="form-control" name="solucion" id="solucion" rows="8" required></textarea>
                         </div>
                         <div class="enviarDiagnostico">
-                            <button type="submit" class="btn btn-outline-dark" id="enviarDiagnostico" value="Submit">Enviar</button>
+                            <button type="submit" class="btn btn-outline-dark" id="enviarDiagnostico" value="Submit" onclick="setAction('crearDiagnostico')">Cerrar diagnóstico</button>
                         </div>
                     </form>     
             </div>
@@ -168,18 +192,9 @@
 
 </main>
 
-<footer class="pie-pagina">
-    <div class="enlaces-sociales">
-        <a href="https://www.facebook.com/UACamOficial"><img src="resources/images/face_logo.png" alt="Facebook"></a>
-        <a href="https://twitter.com/UacamOficial"><img src="resources/images/twitter_logo.jpg" alt="Twitter"></a>
-    </div>
-    <p>&copy; 2024 CIC Assistance. Todos los derechos reservados.</p>
-</footer>
-
-<script src="resources/scripts/panelTecnico.js"></script>
-
 <!-- SCRIPTS PARA GENERAR LOS FILTROS FUNCIONALES ------------------------------------------------------------------------->
 <script src="resources/scripts/panelTecnico.js"></script>
+<script src="resources/scripts/semaforo.js"></script>
 
 <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
@@ -194,11 +209,12 @@
 new DataTable('#TablaHistorialAsignaciones', {
     language: {
         info: 'Mostrando _PAGE_ de _PAGES_ paginas',
-        infoEmpty: 'No records available',
+        infoEmpty: 'No existe ninguna entrada',
         lengthMenu: '_MENU_ Entradas por pagina',
         zeroRecords: 'No se encontro - Lo siento',
         search: "Buscar:"
-    }
+    },
+    order: [[9, 'asc']] // Cambia 0 al índice de la columna que deseas usar para ordenar y 'asc' o 'desc' para el orden ascendente o descendente
     });
 </script>
 

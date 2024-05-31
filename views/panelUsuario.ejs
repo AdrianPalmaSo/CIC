@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menú</title>
+    <title>Menú usuario</title>
     <!-- Estilos CSS -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="resources/css/style_menu_usuario.css">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/2.0.2/css/dataTables.bootstrap5.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -14,11 +15,11 @@
 </head>
 <body>
     <div class="logo-contenedor">
-        <a href="https://www.uacam.mx/">
+        <a href="https://www.uacam.mx/" target="_blank">
             <img src="resources/images/uac_logo.png" alt="Logo Izquierdo" class="logo-izquierdo">
         </a>
-        <h1 class="titulo-sitio" data-id="Estatus" onclick="mostrarContenido(this)">CIC Assistance</h1>
-        <a href="https://fi.uacam.mx/">
+        <h1 class="titulo-sitio" data-id="solicitud-de-reportes" onclick="mostrarContenido('solicitud-de-reportes')">CIC Assistance</h1>
+        <a href="https://fi.uacam.mx/" target="_blank">
             <img src="resources/images/facu_logo.png" alt="Logo Derecho" class="logo-derecho">
         </a>
     </div>
@@ -31,6 +32,7 @@
                 Usuario: <%= name %>
             </button>
             <div class="dropdown-menu">
+		<a class="dropdown-item" href="https://cicassistance.freshdesk.com/support/tickets/new" target="_blank">Contacto/Ticket</a>
                 <a class="dropdown-item" href="logout">Logout <i class="bi bi-box-arrow-right"></i></a>
             </div>
         </div>
@@ -51,6 +53,7 @@
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <link rel="stylesheet" href="resources/css/style_solicitudv2.css">
+            <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
             <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
             <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
             <title>Solicitud Soporte Tecnico</title>
@@ -68,7 +71,7 @@
                         </div>
                         <div>
                             <label for="edificio" class="labelMayor required">Edificio y nivel</label>
-                            <select name="edificio" id="edificio" class="form-select form-select-sm" required>
+                            <select name="edificio" id="edificio" class="js-example-basic-single form-select form-select-sm" style="width: 8em;" required>
                                 <% edificios.forEach(edificios => { %>
                                 <option value="<%= edificios.IdEdificio %>"><%= edificios.NombreEdificio %>-<%= edificios.Nivel %></option>
                                 <% }); %>
@@ -151,7 +154,14 @@
                     </div>
                 </form>
             </div>
+            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+            <script>
+                $(document).ready(function() {
+                    $('.js-example-basic-single').select2();
+                });
+            </script>
             <script src="resources/scripts/solicitudSoporte.js"></script>
             <script src="resources/scripts/seleccionMultipleUsuario.js"></script>
             <script src="resources/scripts/validarTelefono.js"></script>
@@ -215,8 +225,8 @@
                     <!-- Título de la sección -->
                     <h2 id="tituloHistorialSoli">Historial de Solicitudes</h2>
                         <!-- Contenedor para la tabla del historial -->
-                        <div class="table-responsive">
-                            <table  class="table table-hover table-striped" id="TablaHistorialSolicitudes">
+                        <div class="table-responsive" style="max-height: 45em;">
+                            <table  class="table table-hover table-striped overflow-auto" id="TablaHistorialSolicitudes">
                                 <thead>
                                     <th>Folio</th>
                                     <th>Equipo</th>
@@ -224,6 +234,7 @@
                                     <th>Estado</th>
                                     <th>Vale</th>
                                     <th>Dictamen</th>
+                                    <th>Encuesta</th>
                                 </thead>
                             <% historial.forEach(solicitud => { %>
                                 <!-- Fila de la tabla para cada solicitud en el historial -->
@@ -232,27 +243,44 @@
                                     <td><%= solicitud.Equipo %></td>
                                     <td><%= solicitud.Fecha %></td>
                                     <td class="estado-celda" data-estado="<%= solicitud.Estado %>"><%= solicitud.Estado%></td>
-                                    <td><a href="/descargarPDFvale?folioSolicitud=<%= solicitud.FolioSolicitud %>"><img src="resources/images/downloads.png" alt="Descargar Vale"></a> &nbsp &nbsp &nbsp <%= solicitud.Vale %></td>
-                                    <td><a href="/descargarPDFdictamen?folioSolicitud=<%= solicitud.FolioSolicitud %>"><img src="resources/images/downloads.png" alt="Descargar Dictamen"></a> &nbsp &nbsp &nbsp <%= solicitud.Dictamen %></td>
-
+                                    <td>
+                                        <a href="/descargarPDFvale?folioSolicitud=<%= solicitud.FolioSolicitud %>">
+                                            <img src="resources/images/downloads.png" alt="Descargar Vale">
+                                        </a> &nbsp &nbsp &nbsp <%= solicitud.Vale %></td>
+                                    <td>
+                                        <% if (solicitud.Dictamen === "Disponible") { %>
+                                        <a href="/descargarPDFdictamen?folioSolicitud=<%= solicitud.FolioSolicitud %>">
+                                            <img src="resources/images/downloads.png" alt="Descargar Dictamen">
+                                        </a> &nbsp &nbsp &nbsp <%= solicitud.Dictamen %></td>
+                                        <% } %>
+                                    <td>
+                                        <% if (solicitud.Encuesta === "No disponible") { %>
+                                                <!-- Si la encuesta ya ha sido respondida -->
+                                                <p>No disponible</p>
+                                            <% } else if (solicitud.Estado === "Cerrado" && !solicitud.Encuesta) { %>
+                                                <!-- Si el estado es "Cerrado" y la encuesta no ha sido respondida -->
+                                                <form method="POST" action="/encuesta-satisfaccion?folioSolicitud=<%= solicitud.FolioSolicitud %>">
+                                                    <button type="submit" class="btn btn-encuesta" data-folio="">
+                                                        <img src="resources/images/envio.png" alt="Encuesta">
+                                                    </button>
+                                                </form>
+                                            <% } else { %>
+                                                <!-- Si el estado no es "Cerrado", no se muestra la imagen -->
+                                                
+                                                <p>Ya respondió</p>
+                                            <% } %>
+                                </td>
                                 </tr>
                             <% }); %>
                             </table>
                         </div>
-                 </div>
+
+                    </div>
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
         </body>
     </div>  
 
 </main>
-
-<footer class="pie-pagina">
-    <div class="enlaces-sociales">
-        <a href="https://www.facebook.com/UACamOficial"><img src="resources/images/face_logo.png" alt="Facebook"></a>
-        <a href="https://twitter.com/UacamOficial"><img src="resources/images/twitter_logo.jpg" alt="Twitter"></a>
-    </div>
-    <p>&copy; 2024 CIC Assistance. Todos los derechos reservados.</p>
-</footer>
 
 <script src="resources/scripts/semaforo.js"></script>
 <script src="resources/scripts/panelUsario.js"></script>
@@ -266,7 +294,12 @@
 <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 <script src="https://cdn.datatables.net/2.0.2/js/dataTables.js"></script>
 <script src="https://cdn.datatables.net/2.0.2/js/dataTables.bootstrap5.js"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('.js-example-basic-single').select2();
+    });
+</script>
 <script>
 
     $(document).ready(function() {

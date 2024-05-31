@@ -14,21 +14,35 @@
         <img src="resources/images/facu_logo.png" alt="Logo Derecho" class="logo-derecho">
     </div>
     <main class="contenido">
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>  <!-- Obtenido de sweetAlert2  -->
-        <!--Tenemos que llamar la estructura para usar el mensaje AlertSweet en EJS llamando los parametros establecidos en APPJS-->
-        <% if(typeof alert != "undefined"){ %>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script>
+            // Mostrar ventana de carga
             Swal.fire({
-                title: '<%= alertTitle %>',
-                text: '<%= alertMessage %>',
-                icon: '<%= alertIcon %>',
-                showConfirmButton: <%= showConfirmButton %>,
-                timer: <%= timer %>
-            }).then(() =>{
-                window.location ='/<%= ruta %>'    //Hay que especificar la ruta con '/' que indica que nos redirige a la raiz, index
-            })
+                title: 'Cargando...',
+                allowOutsideClick: false,
+                showConfirmButton: false,
+                willOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            // Simular un retardo de 1 segundo antes de mostrar la alerta de confirmación y cerrar la ventana de carga
+            setTimeout(() => {
+
+                // Mostrar alerta de confirmación
+                Swal.close(); // Cerrar ventana de carga
+                Swal.fire({
+                    title: '<%= alertTitle %>',
+                    text: '<%= alertMessage %>',
+                    icon: '<%= alertIcon %>',
+                    showConfirmButton: <%= showConfirmButton %>,
+                    timer: <%= timer %>
+                }).then(() =>{
+                    window.location = '/<%= ruta %>';
+                });
+
+            }, 1000);
         </script>
-        <% } %>
     </main>
 
     <footer class="pie-pagina">
@@ -37,5 +51,5 @@
     
     <script src="resources/scripts/paneles.js"></script>
     
-    </body>
-    </html>
+</body>
+</html>
