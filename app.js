@@ -779,6 +779,7 @@ app.post('/responder-encuesta', async (req, res) => {
 app.post('/generarEstadisticas', (req, res, next) => {
     const { tipo, desdeFecha, hastaFecha } = req.body;
     req.session.estadisticas = { tipo, desdeFecha, hastaFecha };
+    console.log(req.session.estadisticas);
     res.redirect('/estadisticas');
 });
 
